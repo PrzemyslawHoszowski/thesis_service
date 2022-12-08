@@ -10,6 +10,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from identity.forms import SignupForm
+from identity.models import Identity
 from identity.tokens import account_activation_token
 
 import logging
@@ -62,4 +63,8 @@ def activate(request, uidb64, token):
         return HttpResponse('Activation link is invalid!')
 
 def index(request):
-    return HttpResponse("Hello, world.")
+    try:
+        user_identity = Identity.objects.get(user=request.user)
+    except Identity.DoesNotExist:
+        user_identity = None
+    return render(request, 'identity_data.html', {'user': request.user, 'identity': user_identity})

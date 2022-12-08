@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %} Identity Settings {% endblock %}
+
+{% block content %}
+    <p>Username: {{ user.username }}</p>
+    <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+    <p>Mail: {{ user.email }}</p>
+    {% if identity %}
+        <p>Blockchain address: {{ identity.blockchain_address }}</p>
+    {% else %}
+        <button id="blockchain-account-authorize">Link blockchain account</button>
+    {% endif %}
+{% endblock %}
