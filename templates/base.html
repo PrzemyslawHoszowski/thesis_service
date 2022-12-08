@@ -38,15 +38,22 @@
                 {{ user.username }}
             </span>
         {% else %}
-            <span class="navbar-text basic-login-text">
-              Login
-            </span>
-            <span class="navbar-text basic-login-text">
-              Register
-            </span>
+            <a href="{% url 'login' %}">
+                <span class="navbar-text basic-login-text nav-link">
+                    Log In
+                </span>
+            </a>
+            or
+            <a href="{% url 'identity:sign_up' %}">
+                <span class="navbar-text basic-login-text nav-link">
+                    Register
+                </span>
+            </a>
         {% endif %}
     </nav>
-    {% block content %}
-    {% endblock %}
+    <div class="container sidebar-right" >
+        {% block content %}
+        {% endblock %}
+    </div>
 </body>
 </html>

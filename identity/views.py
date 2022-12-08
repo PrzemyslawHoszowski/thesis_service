@@ -12,6 +12,9 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from identity.forms import SignupForm
 from identity.tokens import account_activation_token
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # https://medium.com/@frfahim/django-registration-with-confirmation-email-bb5da011e4ef
 def sign_up(request):
@@ -40,6 +43,7 @@ def sign_up(request):
             return HttpResponse('Please confirm your email address to complete the registration')
     else:
         form = SignupForm()
+    logger.info(form.errors)
     return render(request, 'sign_up.html', {'form': form})
 
 def activate(request, uidb64, token):
