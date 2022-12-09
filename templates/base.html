@@ -11,6 +11,9 @@
     <link rel="stylesheet" type="text/css" href="{% static 'basic.css' %}">
     {% compress js %}
         <script type="module" src="{% static 'basic.js' %}"></script>
+        {% block additional_js %}
+{#    <script src="{% static 'verify_address.js' %}"></script>#}
+        {% endblock %}
     {% endcompress %}
     {% block head %}{% endblock %}
 </head>
