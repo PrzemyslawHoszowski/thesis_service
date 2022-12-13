@@ -3,9 +3,8 @@
 {% block title %} Identity Settings {% endblock %}
 {% load static %}
 {% block additional_js %}
-    <script src="{% static 'verify_address.js' %}"></script>
+    <script type="module" src="{% static 'verify_address.js' %}"></script>
 {% endblock %}
-
 {% block content %}
     <p>Username: {{ user.username }}</p>
     <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
