@@ -11,9 +11,9 @@
     <link rel="stylesheet" type="text/css" href="{% static 'basic.css' %}">
     {% compress js %}
         <script type="module" src="{% static 'basic.js' %}"></script>
+    {% endcompress %}
     {% block additional_js %}
     {% endblock %}
-    {% endcompress %}
     {% block head %}{% endblock %}
 </head>
 <body>

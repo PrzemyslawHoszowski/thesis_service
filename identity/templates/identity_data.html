@@ -2,8 +2,11 @@
 
 {% block title %} Identity Settings {% endblock %}
 {% load static %}
+{% load compress %}
 {% block additional_js %}
+    {% compress js %}
     <script type="module" src="{% static 'verify_address.js' %}"></script>
+    {% endcompress %}
 {% endblock %}
 {% block content %}
     <p>Username: {{ user.username }}</p>
