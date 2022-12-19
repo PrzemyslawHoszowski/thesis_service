@@ -1,11 +1,14 @@
-
 export const getTestnetChainInfo = () => ({
     chainId: "thesis",
-    chainName: "thesis",
-    rpc: "http://localhost:26657",
-    rest: "http://localhost:1317",
+    chainName: "Thesis",
+    rpc: "http://127.0.0.1:26657",
+    rest: "http://127.0.0.1:1317",
     bip44: {
         coinType: 118,
+    },
+    nodeProvider: {
+        name: "Przemysław Hoszowski",
+        email: "przemyslaw.hoszowski@gmail.com"
     },
     bech32Config: {
         bech32PrefixAccAddr: "cosmos",
@@ -17,33 +20,29 @@ export const getTestnetChainInfo = () => ({
     },
     currencies: [
         {
-            coinDenom: "STAKE",
-            coinMinimalDenom: "stake",
-            coinDecimals: 0,
-        },
-        {
-            coinDenom: "TOKEN",
-            coinMinimalDenom: "mtoken",
-            coinDecimals: 3,
+        coinDenom: "stake",
+        coinMinimalDenom: "stake",
+        coinDecimals: 0,
+        coinGeckoId: "cosmos",
         },
     ],
     feeCurrencies: [
         {
-            coinDenom: "TOKEN",
-            coinMinimalDenom: "mtoken",
-            coinDecimals: 3,
+        coinDenom: "stake",
+        coinMinimalDenom: "stake",
+        coinDecimals: 0,
+        coinGeckoId: "cosmos",
+        gasPriceStep: {
+            low: 0.001,
+            average: 0.001,
+            high: 0.001,
+            },
         },
     ],
     stakeCurrency: {
-        coinDenom: "STAKE",
+        coinDenom: "stake",
         coinMinimalDenom: "stake",
         coinDecimals: 0,
+        coinGeckoId: "cosmos",
     },
-    coinType: 118,
-    gasPriceStep: {
-        low: 1,
-        average: 2,
-        high: 3,
-    },
-    features: ["stargate",  "no-legacy-stdTx"],
 })

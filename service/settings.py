@@ -159,7 +159,11 @@ COMPRESS_PRECOMPILERS = (
     ('css', 'compressor_toolkit.precompilers.SCSSCompiler'),
 )
 
-COMPRESS_ENABLED = False
+COMPRESS_CACHEABLE_PRECOMPILERS = (
+    'text/coffeescript',
+)
+
+COMPRESS_ENABLED = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
