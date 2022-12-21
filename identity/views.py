@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 from django.contrib.auth import login
 from django.contrib.auth.models import User
@@ -62,9 +63,11 @@ def activate(request, uidb64, token):
     else:
         return HttpResponse('Activation link is invalid!')
 
+@login_required
 def index(request):
     try:
         user_identity = Identity.objects.get(user=request.user)
     except Identity.DoesNotExist:
-        user_identity = None
+        user_identity = Identity.create(request.user)
+        user_identity.save()
     return render(request, 'identity_data.html', {'user': request.user, 'identity': user_identity})

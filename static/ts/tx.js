@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.MsgClientImpl = exports.MsgRejectSignatureResponse = exports.MsgRejectSignature = exports.MsgSignDocumentResponse = exports.MsgSignDocument = exports.MsgEditFilesResponse = exports.MsgEditFiles = exports.MsgRemoveUsersResponse = exports.MsgRemoveUsers = exports.MsgAddUsersResponse = exports.MsgAddUsers = exports.MsgCreateDocumentResponse = exports.MsgCreateDocument = exports.MsgAddCertificateResponse = exports.MsgAddCertificate = exports.protobufPackage = void 0;
+exports.MsgClientImpl = exports.MsgAuthorizeResponse = exports.MsgAuthorize = exports.MsgRejectSignatureResponse = exports.MsgRejectSignature = exports.MsgSignDocumentResponse = exports.MsgSignDocument = exports.MsgEditFilesResponse = exports.MsgEditFiles = exports.MsgRemoveUsersResponse = exports.MsgRemoveUsers = exports.MsgAddUsersResponse = exports.MsgAddUsers = exports.MsgCreateDocumentResponse = exports.MsgCreateDocument = exports.MsgAddCertificateResponse = exports.MsgAddCertificate = exports.protobufPackage = void 0;
 /* eslint-disable */
 // @ts-ignore
 var long_1 = require("long");
@@ -59,10 +59,21 @@ exports.MsgAddCertificate = {
         message.hash !== undefined && (obj.hash = message.hash);
         message.address !== undefined && (obj.address = message.address);
         return obj;
+    },
+    fromPartial: function (object) {
+        var _a, _b, _c;
+        var message = createBaseMsgAddCertificate();
+        // @ts-ignore
+        message.creator = (_a = object.creator) !== null && _a !== void 0 ? _a : "";
+        // @ts-ignore
+        message.hash = (_b = object.hash) !== null && _b !== void 0 ? _b : "";
+        // @ts-ignore
+        message.address = (_c = object.address) !== null && _c !== void 0 ? _c : "";
+        return message;
     }
 };
 function createBaseMsgAddCertificateResponse() {
-    return { id: 0 };
+    return { id: long_1["default"].UZERO };
 }
 exports.MsgAddCertificateResponse = {
     encode: function (message, writer) {
@@ -99,6 +110,16 @@ exports.MsgAddCertificateResponse = {
         message.id !== undefined &&
             (obj.id = (message.id || long_1["default"].UZERO).toString());
         return obj;
+    },
+    fromPartial: function (object) {
+        var message = createBaseMsgAddCertificateResponse();
+        message.id =
+            // @ts-ignore
+            object.id !== undefined && object.id !== null
+                // @ts-ignore
+                ? long_1["default"].fromValue(object.id)
+                : long_1["default"].UZERO;
+        return message;
     }
 };
 function createBaseMsgCreateDocument() {
@@ -203,6 +224,16 @@ exports.MsgCreateDocumentResponse = {
         message.id !== undefined &&
             (obj.id = (message.id || long_1["default"].UZERO).toString());
         return obj;
+    },
+    fromPartial: function (object) {
+        var message = createBaseMsgCreateDocumentResponse();
+        message.id =
+            // @ts-ignore
+            object.id !== undefined && object.id !== null
+                // @ts-ignore
+                ? long_1["default"].fromValue(object.id)
+                : long_1["default"].UZERO;
+        return message;
     }
 };
 function createBaseMsgAddUsers() {
@@ -274,6 +305,19 @@ exports.MsgAddUsers = {
             obj.addresses = [];
         }
         return obj;
+    },
+    fromPartial: function (object) {
+        var _a, _b, _c, _d;
+        var message = createBaseMsgAddUsers();
+        // @ts-ignore
+        message.creator = (_a = object.creator) !== null && _a !== void 0 ? _a : "";
+        // @ts-ignore
+        message.documentId = (_b = object.documentId) !== null && _b !== void 0 ? _b : "";
+        // @ts-ignore
+        message.role = (_c = object.role) !== null && _c !== void 0 ? _c : "";
+        // @ts-ignore
+        message.addresses = ((_d = object.addresses) === null || _d === void 0 ? void 0 : _d.map(function (e) { return e; })) || [];
+        return message;
     }
 };
 function createBaseMsgAddUsersResponse() {
@@ -314,6 +358,16 @@ exports.MsgAddUsersResponse = {
         message.id !== undefined &&
             (obj.id = (message.id || long_1["default"].UZERO).toString());
         return obj;
+    },
+    fromPartial: function (object) {
+        var message = createBaseMsgAddUsersResponse();
+        message.id =
+            // @ts-ignore
+            object.id !== undefined && object.id !== null
+                // @ts-ignore
+                ? long_1["default"].fromValue(object.id)
+                : long_1["default"].UZERO;
+        return message;
     }
 };
 function createBaseMsgRemoveUsers() {
@@ -385,6 +439,19 @@ exports.MsgRemoveUsers = {
             obj.addresses = [];
         }
         return obj;
+    },
+    fromPartial: function (object) {
+        var _a, _b, _c, _d;
+        var message = createBaseMsgRemoveUsers();
+        // @ts-ignore
+        message.creator = (_a = object.creator) !== null && _a !== void 0 ? _a : "";
+        // @ts-ignore
+        message.documentId = (_b = object.documentId) !== null && _b !== void 0 ? _b : "";
+        // @ts-ignore
+        message.role = (_c = object.role) !== null && _c !== void 0 ? _c : "";
+        // @ts-ignore
+        message.addresses = ((_d = object.addresses) === null || _d === void 0 ? void 0 : _d.map(function (e) { return e; })) || [];
+        return message;
     }
 };
 function createBaseMsgRemoveUsersResponse() {
@@ -425,6 +492,16 @@ exports.MsgRemoveUsersResponse = {
         message.id !== undefined &&
             (obj.id = (message.id || long_1["default"].UZERO).toString());
         return obj;
+    },
+    fromPartial: function (object) {
+        var message = createBaseMsgRemoveUsersResponse();
+        message.id =
+            // @ts-ignore
+            object.id !== undefined && object.id !== null
+                // @ts-ignore
+                ? long_1["default"].fromValue(object.id)
+                : long_1["default"].UZERO;
+        return message;
     }
 };
 function createBaseMsgEditFiles() {
@@ -488,6 +565,17 @@ exports.MsgEditFiles = {
             obj.files = [];
         }
         return obj;
+    },
+    fromPartial: function (object) {
+        var _a, _b, _c;
+        var message = createBaseMsgEditFiles();
+        // @ts-ignore
+        message.creator = (_a = object.creator) !== null && _a !== void 0 ? _a : "";
+        // @ts-ignore
+        message.documentId = (_b = object.documentId) !== null && _b !== void 0 ? _b : "";
+        // @ts-ignore
+        message.files = ((_c = object.files) === null || _c === void 0 ? void 0 : _c.map(function (e) { return e; })) || [];
+        return message;
     }
 };
 function createBaseMsgEditFilesResponse() {
@@ -528,6 +616,16 @@ exports.MsgEditFilesResponse = {
         message.id !== undefined &&
             (obj.id = (message.id || long_1["default"].UZERO).toString());
         return obj;
+    },
+    fromPartial: function (object) {
+        var message = createBaseMsgEditFilesResponse();
+        message.id =
+            // @ts-ignore
+            object.id !== undefined && object.id !== null
+                // @ts-ignore
+                ? long_1["default"].fromValue(object.id)
+                : long_1["default"].UZERO;
+        return message;
     }
 };
 function createBaseMsgSignDocument() {
@@ -591,6 +689,17 @@ exports.MsgSignDocument = {
             obj.files = [];
         }
         return obj;
+    },
+    fromPartial: function (object) {
+        var _a, _b, _c;
+        var message = createBaseMsgSignDocument();
+        // @ts-ignore
+        message.creator = (_a = object.creator) !== null && _a !== void 0 ? _a : "";
+        // @ts-ignore
+        message.documentId = (_b = object.documentId) !== null && _b !== void 0 ? _b : "";
+        // @ts-ignore
+        message.files = ((_c = object.files) === null || _c === void 0 ? void 0 : _c.map(function (e) { return e; })) || [];
+        return message;
     }
 };
 function createBaseMsgSignDocumentResponse() {
@@ -631,6 +740,16 @@ exports.MsgSignDocumentResponse = {
         message.id !== undefined &&
             (obj.id = (message.id || long_1["default"].UZERO).toString());
         return obj;
+    },
+    fromPartial: function (object) {
+        var message = createBaseMsgSignDocumentResponse();
+        message.id =
+            // @ts-ignore
+            object.id !== undefined && object.id !== null
+                // @ts-ignore
+                ? long_1["default"].fromValue(object.id)
+                : long_1["default"].UZERO;
+        return message;
     }
 };
 function createBaseMsgRejectSignature() {
@@ -678,6 +797,15 @@ exports.MsgRejectSignature = {
         message.creator !== undefined && (obj.creator = message.creator);
         message.documentId !== undefined && (obj.documentId = message.documentId);
         return obj;
+    },
+    fromPartial: function (object) {
+        var _a, _b;
+        var message = createBaseMsgRejectSignature();
+        // @ts-ignore
+        message.creator = (_a = object.creator) !== null && _a !== void 0 ? _a : "";
+        // @ts-ignore
+        message.documentId = (_b = object.documentId) !== null && _b !== void 0 ? _b : "";
+        return message;
     }
 };
 function createBaseMsgRejectSignatureResponse() {
@@ -718,6 +846,122 @@ exports.MsgRejectSignatureResponse = {
         message.id !== undefined &&
             (obj.id = (message.id || long_1["default"].UZERO).toString());
         return obj;
+    },
+    fromPartial: function (object) {
+        var message = createBaseMsgRejectSignatureResponse();
+        message.id =
+            // @ts-ignore
+            object.id !== undefined && object.id !== null
+                // @ts-ignore
+                ? long_1["default"].fromValue(object.id)
+                : long_1["default"].UZERO;
+        return message;
+    }
+};
+function createBaseMsgAuthorize() {
+    return { creator: "", accountId: "" };
+}
+exports.MsgAuthorize = {
+    encode: function (message, writer) {
+        if (writer === void 0) { writer = minimal_1.Writer.create(); }
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.accountId !== "") {
+            writer.uint32(18).string(message.accountId);
+        }
+        return writer;
+    },
+    decode: function (input, length) {
+        var reader = input instanceof minimal_1.Reader ? input : new minimal_1.Reader(input);
+        var end = length === undefined ? reader.len : reader.pos + length;
+        var message = createBaseMsgAuthorize();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.accountId = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON: function (object) {
+        return {
+            creator: isSet(object.creator) ? String(object.creator) : "",
+            accountId: isSet(object.accountId) ? String(object.accountId) : ""
+        };
+    },
+    toJSON: function (message) {
+        var obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.accountId !== undefined && (obj.accountId = message.accountId);
+        return obj;
+    },
+    fromPartial: function (object) {
+        var _a, _b;
+        var message = createBaseMsgAuthorize();
+        // @ts-ignore
+        message.creator = (_a = object.creator) !== null && _a !== void 0 ? _a : "";
+        // @ts-ignore
+        message.accountId = (_b = object.accountId) !== null && _b !== void 0 ? _b : "";
+        return message;
+    }
+};
+function createBaseMsgAuthorizeResponse() {
+    return { id: long_1["default"].UZERO };
+}
+exports.MsgAuthorizeResponse = {
+    encode: function (message, writer) {
+        if (writer === void 0) { writer = minimal_1.Writer.create(); }
+        if (!message.id.isZero()) {
+            writer.uint32(8).uint64(message.id);
+        }
+        return writer;
+    },
+    decode: function (input, length) {
+        var reader = input instanceof minimal_1.Reader ? input : new minimal_1.Reader(input);
+        var end = length === undefined ? reader.len : reader.pos + length;
+        var message = createBaseMsgAuthorizeResponse();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.uint64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON: function (object) {
+        return {
+            id: isSet(object.id) ? long_1["default"].fromValue(object.id) : long_1["default"].UZERO
+        };
+    },
+    toJSON: function (message) {
+        var obj = {};
+        message.id !== undefined &&
+            (obj.id = (message.id || long_1["default"].UZERO).toString());
+        return obj;
+    },
+    fromPartial: function (object) {
+        var message = createBaseMsgAuthorizeResponse();
+        message.id =
+            // @ts-ignore
+            object.id !== undefined && object.id !== null
+                // @ts-ignore
+                ? long_1["default"].fromValue(object.id)
+                : long_1["default"].UZERO;
+        return message;
     }
 };
 var MsgClientImpl = /** @class */ (function () {
@@ -730,6 +974,7 @@ var MsgClientImpl = /** @class */ (function () {
         this.EditFiles = this.EditFiles.bind(this);
         this.SignDocument = this.SignDocument.bind(this);
         this.RejectSignature = this.RejectSignature.bind(this);
+        this.Authorize = this.Authorize.bind(this);
     }
     MsgClientImpl.prototype.AddCertificate = function (request) {
         var data = exports.MsgAddCertificate.encode(request).finish();
@@ -778,6 +1023,13 @@ var MsgClientImpl = /** @class */ (function () {
         var promise = this.rpc.request("thesis.thesis.Msg", "RejectSignature", data);
         return promise.then(function (data) {
             return exports.MsgRejectSignatureResponse.decode(new minimal_1.Reader(data));
+        });
+    };
+    MsgClientImpl.prototype.Authorize = function (request) {
+        var data = exports.MsgAuthorize.encode(request).finish();
+        var promise = this.rpc.request("thesis.thesis.Msg", "Authorize", data);
+        return promise.then(function (data) {
+            return exports.MsgAuthorizeResponse.decode(new minimal_1.Reader(data));
         });
     };
     return MsgClientImpl;

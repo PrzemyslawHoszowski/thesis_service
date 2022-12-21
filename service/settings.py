@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import environ
 
+
 env = environ.Env()
 environ.Env.read_env()
 
@@ -179,3 +180,7 @@ EMAIL_HOST = env("EMAIL_HOST") #'smtp.gmail.com'
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = env("EMAIL_PORT")
+
+#Blockchain
+BLOCKCHAIN_HOST = env("BLOCKCHAIN_HOST")
+BLOCKCHAIN_PORT = env("BLOCKCHAIN_PORT")

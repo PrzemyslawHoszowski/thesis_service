@@ -1,7 +1,7 @@
 /* eslint-disable */
 // @ts-ignore
 import Long from "long";
-import {configure, Reader, util, Writer} from 'protobufjs/minimal';
+import {configure, Reader, util, Writer} from "protobufjs/minimal";
 
 export const protobufPackage = "thesis.thesis";
 
@@ -75,6 +75,15 @@ export interface MsgRejectSignatureResponse {
   id: Long;
 }
 
+export interface MsgAuthorize {
+  creator: string;
+  accountId: string;
+}
+
+export interface MsgAuthorizeResponse {
+  id: Long;
+}
+
 function createBaseMsgAddCertificate(): MsgAddCertificate {
   return { creator: "", hash: "", address: "" };
 }
@@ -135,10 +144,24 @@ export const MsgAddCertificate = {
     message.address !== undefined && (obj.address = message.address);
     return obj;
   },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAddCertificate>, I>>(
+    object: I
+  ): MsgAddCertificate {
+    const message = createBaseMsgAddCertificate();
+
+    // @ts-ignore
+    message.creator = object.creator ?? "";
+    // @ts-ignore
+    message.hash = object.hash ?? "";
+    // @ts-ignore
+    message.address = object.address ?? "";
+    return message;
+  },
 };
 
 function createBaseMsgAddCertificateResponse(): MsgAddCertificateResponse {
-  return { id: 0 };
+  return { id: Long.UZERO };
 }
 
 export const MsgAddCertificateResponse = {
@@ -184,6 +207,19 @@ export const MsgAddCertificateResponse = {
     message.id !== undefined &&
       (obj.id = (message.id || Long.UZERO).toString());
     return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAddCertificateResponse>, I>>(
+    object: I
+  ): MsgAddCertificateResponse {
+    const message = createBaseMsgAddCertificateResponse();
+    message.id =
+        // @ts-ignore
+      object.id !== undefined && object.id !== null
+          // @ts-ignore
+        ? Long.fromValue(object.id)
+        : Long.UZERO;
+    return message;
   },
 };
 
@@ -245,6 +281,7 @@ export const MsgCreateDocument = {
     }
     return obj;
   },
+
   fromPartial<I extends Exact<DeepPartial<MsgCreateDocument>, I>>(
     object: I
   ): MsgCreateDocument {
@@ -304,6 +341,19 @@ export const MsgCreateDocumentResponse = {
     message.id !== undefined &&
       (obj.id = (message.id || Long.UZERO).toString());
     return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgCreateDocumentResponse>, I>>(
+    object: I
+  ): MsgCreateDocumentResponse {
+    const message = createBaseMsgCreateDocumentResponse();
+    message.id =
+        // @ts-ignore
+      object.id !== undefined && object.id !== null
+          // @ts-ignore
+        ? Long.fromValue(object.id)
+        : Long.UZERO;
+    return message;
   },
 };
 
@@ -381,6 +431,21 @@ export const MsgAddUsers = {
     }
     return obj;
   },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAddUsers>, I>>(
+    object: I
+  ): MsgAddUsers {
+    const message = createBaseMsgAddUsers();
+    // @ts-ignore
+    message.creator = object.creator ?? "";
+    // @ts-ignore
+    message.documentId = object.documentId ?? "";
+    // @ts-ignore
+    message.role = object.role ?? "";
+    // @ts-ignore
+    message.addresses = object.addresses?.map((e) => e) || [];
+    return message;
+  },
 };
 
 function createBaseMsgAddUsersResponse(): MsgAddUsersResponse {
@@ -427,6 +492,19 @@ export const MsgAddUsersResponse = {
     message.id !== undefined &&
       (obj.id = (message.id || Long.UZERO).toString());
     return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAddUsersResponse>, I>>(
+    object: I
+  ): MsgAddUsersResponse {
+    const message = createBaseMsgAddUsersResponse();
+    message.id =
+    // @ts-ignore
+      object.id !== undefined && object.id !== null
+    // @ts-ignore
+        ? Long.fromValue(object.id)
+        : Long.UZERO;
+    return message;
   },
 };
 
@@ -504,6 +582,21 @@ export const MsgRemoveUsers = {
     }
     return obj;
   },
+
+  fromPartial<I extends Exact<DeepPartial<MsgRemoveUsers>, I>>(
+    object: I
+  ): MsgRemoveUsers {
+    const message = createBaseMsgRemoveUsers();
+    // @ts-ignore
+    message.creator = object.creator ?? "";
+    // @ts-ignore
+    message.documentId = object.documentId ?? "";
+    // @ts-ignore
+    message.role = object.role ?? "";
+    // @ts-ignore
+    message.addresses = object.addresses?.map((e) => e) || [];
+    return message;
+  },
 };
 
 function createBaseMsgRemoveUsersResponse(): MsgRemoveUsersResponse {
@@ -553,6 +646,19 @@ export const MsgRemoveUsersResponse = {
     message.id !== undefined &&
       (obj.id = (message.id || Long.UZERO).toString());
     return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgRemoveUsersResponse>, I>>(
+    object: I
+  ): MsgRemoveUsersResponse {
+    const message = createBaseMsgRemoveUsersResponse();
+    message.id =
+    // @ts-ignore
+      object.id !== undefined && object.id !== null
+    // @ts-ignore
+        ? Long.fromValue(object.id)
+        : Long.UZERO;
+    return message;
   },
 };
 
@@ -622,6 +728,19 @@ export const MsgEditFiles = {
     }
     return obj;
   },
+
+  fromPartial<I extends Exact<DeepPartial<MsgEditFiles>, I>>(
+    object: I
+  ): MsgEditFiles {
+    const message = createBaseMsgEditFiles();
+    // @ts-ignore
+    message.creator = object.creator ?? "";
+    // @ts-ignore
+    message.documentId = object.documentId ?? "";
+    // @ts-ignore
+    message.files = object.files?.map((e) => e) || [];
+    return message;
+  },
 };
 
 function createBaseMsgEditFilesResponse(): MsgEditFilesResponse {
@@ -671,6 +790,19 @@ export const MsgEditFilesResponse = {
     message.id !== undefined &&
       (obj.id = (message.id || Long.UZERO).toString());
     return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgEditFilesResponse>, I>>(
+    object: I
+  ): MsgEditFilesResponse {
+    const message = createBaseMsgEditFilesResponse();
+    message.id =
+    // @ts-ignore
+      object.id !== undefined && object.id !== null
+    // @ts-ignore
+        ? Long.fromValue(object.id)
+        : Long.UZERO;
+    return message;
   },
 };
 
@@ -740,6 +872,19 @@ export const MsgSignDocument = {
     }
     return obj;
   },
+
+  fromPartial<I extends Exact<DeepPartial<MsgSignDocument>, I>>(
+    object: I
+  ): MsgSignDocument {
+    const message = createBaseMsgSignDocument();
+    // @ts-ignore
+    message.creator = object.creator ?? "";
+    // @ts-ignore
+    message.documentId = object.documentId ?? "";
+    // @ts-ignore
+    message.files = object.files?.map((e) => e) || [];
+    return message;
+  },
 };
 
 function createBaseMsgSignDocumentResponse(): MsgSignDocumentResponse {
@@ -789,6 +934,19 @@ export const MsgSignDocumentResponse = {
     message.id !== undefined &&
       (obj.id = (message.id || Long.UZERO).toString());
     return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgSignDocumentResponse>, I>>(
+    object: I
+  ): MsgSignDocumentResponse {
+    const message = createBaseMsgSignDocumentResponse();
+    message.id =
+    // @ts-ignore
+      object.id !== undefined && object.id !== null
+    // @ts-ignore
+        ? Long.fromValue(object.id)
+        : Long.UZERO;
+    return message;
   },
 };
 
@@ -844,6 +1002,17 @@ export const MsgRejectSignature = {
     message.documentId !== undefined && (obj.documentId = message.documentId);
     return obj;
   },
+
+  fromPartial<I extends Exact<DeepPartial<MsgRejectSignature>, I>>(
+    object: I
+  ): MsgRejectSignature {
+    const message = createBaseMsgRejectSignature();
+    // @ts-ignore
+    message.creator = object.creator ?? "";
+    // @ts-ignore
+    message.documentId = object.documentId ?? "";
+    return message;
+  },
 };
 
 function createBaseMsgRejectSignatureResponse(): MsgRejectSignatureResponse {
@@ -895,7 +1064,146 @@ export const MsgRejectSignatureResponse = {
     return obj;
   },
 
+  fromPartial<I extends Exact<DeepPartial<MsgRejectSignatureResponse>, I>>(
+    object: I
+  ): MsgRejectSignatureResponse {
+    const message = createBaseMsgRejectSignatureResponse();
+    message.id =
+    // @ts-ignore
+      object.id !== undefined && object.id !== null
+    // @ts-ignore
+        ? Long.fromValue(object.id)
+        : Long.UZERO;
+    return message;
+  },
+};
 
+function createBaseMsgAuthorize(): MsgAuthorize {
+  return { creator: "", accountId: "" };
+}
+
+export const MsgAuthorize = {
+  encode(
+    message: MsgAuthorize,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.accountId !== "") {
+      writer.uint32(18).string(message.accountId);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgAuthorize {
+    const reader = input instanceof Reader ? input : new Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgAuthorize();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.accountId = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgAuthorize {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      accountId: isSet(object.accountId) ? String(object.accountId) : "",
+    };
+  },
+
+  toJSON(message: MsgAuthorize): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.accountId !== undefined && (obj.accountId = message.accountId);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAuthorize>, I>>(
+    object: I
+  ): MsgAuthorize {
+    const message = createBaseMsgAuthorize();
+    // @ts-ignore
+    message.creator = object.creator ?? "";
+    // @ts-ignore
+    message.accountId = object.accountId ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgAuthorizeResponse(): MsgAuthorizeResponse {
+  return { id: Long.UZERO };
+}
+
+export const MsgAuthorizeResponse = {
+  encode(
+    message: MsgAuthorizeResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (!message.id.isZero()) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgAuthorizeResponse {
+    const reader = input instanceof Reader ? input : new Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgAuthorizeResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = reader.uint64() as Long;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgAuthorizeResponse {
+    return {
+      id: isSet(object.id) ? Long.fromValue(object.id) : Long.UZERO,
+    };
+  },
+
+  toJSON(message: MsgAuthorizeResponse): unknown {
+    const obj: any = {};
+    message.id !== undefined &&
+      (obj.id = (message.id || Long.UZERO).toString());
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAuthorizeResponse>, I>>(
+    object: I
+  ): MsgAuthorizeResponse {
+    const message = createBaseMsgAuthorizeResponse();
+    message.id =
+    // @ts-ignore
+      object.id !== undefined && object.id !== null
+    // @ts-ignore
+        ? Long.fromValue(object.id)
+        : Long.UZERO;
+    return message;
+  },
 };
 
 /** Msg defines the Msg service. */
@@ -910,10 +1218,11 @@ export interface Msg {
   RemoveUsers(request: MsgRemoveUsers): Promise<MsgRemoveUsersResponse>;
   EditFiles(request: MsgEditFiles): Promise<MsgEditFilesResponse>;
   SignDocument(request: MsgSignDocument): Promise<MsgSignDocumentResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   RejectSignature(
     request: MsgRejectSignature
   ): Promise<MsgRejectSignatureResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  Authorize(request: MsgAuthorize): Promise<MsgAuthorizeResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -927,6 +1236,7 @@ export class MsgClientImpl implements Msg {
     this.EditFiles = this.EditFiles.bind(this);
     this.SignDocument = this.SignDocument.bind(this);
     this.RejectSignature = this.RejectSignature.bind(this);
+    this.Authorize = this.Authorize.bind(this);
   }
   AddCertificate(
     request: MsgAddCertificate
@@ -999,6 +1309,14 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgRejectSignatureResponse.decode(new Reader(data))
+    );
+  }
+
+  Authorize(request: MsgAuthorize): Promise<MsgAuthorizeResponse> {
+    const data = MsgAuthorize.encode(request).finish();
+    const promise = this.rpc.request("thesis.thesis.Msg", "Authorize", data);
+    return promise.then((data) =>
+      MsgAuthorizeResponse.decode(new Reader(data))
     );
   }
 }
