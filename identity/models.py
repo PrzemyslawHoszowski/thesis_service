@@ -15,7 +15,7 @@ class Identity(models.Model):
     blockchain_address = models.CharField(max_length=45, unique=True, verbose_name='address', null=True, default=None)
     verification_status = models.IntegerField(choices=VerificationStatus.choices, default=VerificationStatus.ADDRESS_VERIFICATION, verbose_name='verification status')
     service_verification_tx_hash = models.CharField(max_length=256, verbose_name='service_tx', null=True, default=None)
-    user_verification_tx_hash = models.CharField(max_length=256, verbose_name='user_tx', null=True, default=None)
+    user_verification_tx_height = models.IntegerField(verbose_name='user_tx', null=True, default=None)
     created_at = models.DateTimeField('date created', default=datetime.now)
     modified_at = models.DateTimeField('date modified', default=datetime.now)
 
