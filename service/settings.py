@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import environ
 
+
 env = environ.Env()
 environ.Env.read_env()
 
@@ -43,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'identity.apps.IdentityConfig',
     'documents.apps.DocumentsConfig',
+    'compressor',
+    'compressor_toolkit',
 ]
 
 MIDDLEWARE = [
@@ -127,10 +130,41 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+STATIC_ROOT = 'static_collected'
 STATIC_URL = '/static/'
+MEDIA_ROOT = 'media'
+MEDIA_URL = '/media/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+# compressor settings
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.CSSMinFilter',
+    'compressor.filters.template.TemplateFilter'
+]
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.jsmin.JSMinFilter',
+]
+
+
+COMPRESS_PRECOMPILERS = (
+    ('module', 'compressor_toolkit.precompilers.ES6Compiler'),
+    ('css', 'compressor_toolkit.precompilers.SCSSCompiler'),
+)
+
+COMPRESS_CACHEABLE_PRECOMPILERS = (
+    'text/coffeescript',
+)
+
+COMPRESS_ENABLED = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -139,3 +173,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+# Email client
+EMAIL_USE_TLS = True
+EMAIL_HOST = env("EMAIL_HOST") #'smtp.gmail.com'
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = env("EMAIL_PORT")
+
+#Blockchain
+BLOCKCHAIN_HOST = env("BLOCKCHAIN_HOST")
+BLOCKCHAIN_PORT = env("BLOCKCHAIN_PORT")

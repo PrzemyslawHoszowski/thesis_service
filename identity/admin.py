@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from .models import Certificate, OwnedIdentities
+from .models import Identity
 
 
-admin.site.register(Certificate)
-admin.site.register(OwnedIdentities)
+admin.site.register(Identity)
