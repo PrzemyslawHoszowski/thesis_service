@@ -11,4 +11,22 @@
 
 {% block content %}
 <button id="create-document">Create document</button>
+    <table class="table table-striped">
+    <thead>
+    <tr id="headers">
+        <th scope="col" class="text-center az" data-defaultsign="nospan">Nazwa</th>
+        <th scope="col" class="text-center">Stan</th>
+        <th scope="col" class="text-center">Data</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for doc in docs %}
+        <tr id="{{ doc.doc.index }}">
+            <td class="text-center"> {{ doc.name }}</td>
+            <td class="text-center">{{ doc.doc.state }}</td>
+            <td class="text-center">{{ doc.doc.updatedAt }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

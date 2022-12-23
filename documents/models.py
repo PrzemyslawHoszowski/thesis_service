@@ -18,9 +18,10 @@ class Document(models.Model):
     viewers = ArrayField(models.CharField(max_length=45))
     signed = ArrayField(models.CharField(max_length=45))
     rejectionReasonHash = models.CharField(max_length=64)
+    updatedAt = models.DateTimeField()
 
     @classmethod
-    def create(cls, json):
+    def create(cls, json, updated_at):
         return cls(
             index=json['index'],
             state=json['state'],
@@ -30,7 +31,9 @@ class Document(models.Model):
             signers=json['signers'],
             viewers=json['viewers'],
             signed=json['signed'],
-            rejectionReasonHash=json['rejectionReason'])
+            rejectionReasonHash=json['rejectionReason'],
+            updatedAt=updated_at
+        )
 
     def entities(self):
         return list(set(self.admins + self.editors + self.signers + self.viewers))
@@ -51,19 +54,26 @@ class Event(models.Model):
 class DocumentStorage(models.Model):
     id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     name = models.CharField(max_length=100)
-    docIndex = models.IntegerField(null=False)
+    doc = models.ForeignKey(Document, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     hidden = models.BooleanField(default=False)
 
     @classmethod
     def create_records(cls, document, identities):
         for identity in identities:
-            DocumentStorage(docIndex=document.index, user=identity.user).save()
+            DocumentStorage(doc=document, user=identity.user).save()
+
+    @classmethod
+    def get_user_documents(cls, user, filter_hidden=True):
+        indexes = DocumentStorage.objects.filter(user=user)
+        if filter_hidden:
+            indexes = indexes.filter(hidden=False)
+        return indexes.select_related('doc')
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['docIndex', 'user'], name='unique_document_user_combination'
+                fields=['doc', 'user'], name='unique_document_user_combination'
             )
         ]
 

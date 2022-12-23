@@ -48,9 +48,9 @@ def handle_authorization(event, height, _):
 @sync_to_async
 def handle_document_created(event, height, tx_hash):
     index = event['attributes']['document-id']
-    document = get_document(index)
-    document = Document.create(document)
     event_time = get_block_time(height)
+    document = get_document(index)
+    document = Document.create(document, event_time)
     event = Event.create(json.dumps(event['attributes']), event_time, tx_hash, document)
     with transaction.atomic():
         document.save()
