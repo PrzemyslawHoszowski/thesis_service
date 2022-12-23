@@ -22,7 +22,7 @@
     <tbody>
     {% for doc in docs %}
         <tr id="{{ doc.doc.index }}">
-            <td class="text-center"> {{ doc.name }}</td>
+            <td class="text-center"><a href="{% url 'documents:doc' doc.doc.index %}"> {{ doc.name }} </a></td>
             <td class="text-center">{{ doc.doc.state }}</td>
             <td class="text-center">{{ doc.doc.updatedAt }}</td>
         </tr>

@@ -35,11 +35,34 @@ class Document(models.Model):
             updatedAt=updated_at
         )
 
+    def translated_roles(self):
+        self.get_identities_mapping()
+        remaining = set(self.signers) - set(self.signed)
+        return {
+            "admins": list(map(self.identities_mapping.get, self.admins)),
+            "editors": list(map(self.identities_mapping.get, self.editors)),
+            "remaining_signers": list(map(self.identities_mapping.get, remaining)),
+            "signed": list(map(self.identities_mapping.get, self.signed)),
+            "viewers": list(map(self.identities_mapping.get, self.editors)),
+        }
+
+    def get_identities_mapping(self):
+        if not hasattr(self, 'identities_mapping'):
+            self.identities_mapping = dict(map(lambda x: (x.blockchain_address, x), self.users()))
+        return self.identities_mapping
+
+    def if_signed(self, user: Identity):
+        return user.blockchain_address in self.signed
+
     def entities(self):
         return list(set(self.admins + self.editors + self.signers + self.viewers))
 
     def users(self):
         return Identity.to_identity_list(self.entities())
+
+    def rejection_reason(self):
+        # todo make some mapping to valid string for authorized users
+        return self.rejectionReasonHash
 
 class Event(models.Model):
     attr = models.CharField(max_length=2000)

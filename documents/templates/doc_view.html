@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+{% load static %}
+{% load compress %}
+{% block additional_js %}
+    {% compress js %}
+    <script type="module" src="{% static 'document_actions.js' %}"></script>
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <h3>{{ doc.name }}</h3>
+    <span id="state">State: {{ doc.doc.state }}</span>
+    <div id="files">
+        <table id="files-table">
+            <thead>
+                <tr><th>Files</th></tr>
+            </thead>
+            <tbody>
+                {% for file in doc.doc.files %}
+                    <tr><td>{{ file }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    <div id="roles">
+        <table id="admins-table">
+            <thead>
+                <tr><th>Admins</th></tr>
+            </thead>
+            <tbody>
+                {% for person in roles.admins %}
+                    <tr><td>{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <table id="editors-table">
+            <thead>
+                <tr><th>Editors</th></tr>
+            </thead>
+            <tbody>
+                {% for person in roles.editors %}
+                    <tr><td>{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <table id="viewers-table">
+            <thead>
+                <tr><th>Viewers</th></tr>
+            </thead>
+            <tbody>
+                {% for person in roles.viewers %}
+                    <tr><td>{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <table id="signers-table">
+            <thead>
+                <tr><th>Remaining Signers</th></tr>
+            </thead>
+            <tbody>
+                {% for person in roles.remaining_signers %}
+                    <tr><td>{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if doc.doc.rejection_reason != '' %}
+            <span>Rejection reason: doc.doc.rejection_reason</span>
+        {% else %}
+        <table id="signers-table">
+            <thead>
+                <tr><th>Signed</th></tr>
+            </thead>
+            <tbody>
+                {% for person in roles.signed %}
+                    <tr><td>{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+{% endblock %}
