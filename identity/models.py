@@ -22,3 +22,7 @@ class Identity(models.Model):
     @classmethod
     def create(cls, user):
         return cls(user=user)
+
+    @classmethod
+    def to_identity_list(cls, addresses):
+        return Identity.objects.filter(blockchain_address__in=addresses).select_related('user')

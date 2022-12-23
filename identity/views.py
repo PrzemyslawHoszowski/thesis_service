@@ -3,7 +3,7 @@ from django.core.mail import EmailMessage
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -58,8 +58,7 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        # return redirect('home')
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        return redirect('identity:index')
     else:
         return HttpResponse('Activation link is invalid!')
 

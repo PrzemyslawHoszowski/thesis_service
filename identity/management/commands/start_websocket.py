@@ -1,5 +1,8 @@
 import asyncio
 import base64
+from datetime import datetime
+
+import requests
 import logging
 import traceback
 
@@ -7,13 +10,27 @@ import websockets
 import json
 from asgiref.sync import sync_to_async
 from django.core.management.base import BaseCommand
+from django.db import transaction
+from django.utils.timezone import make_aware
 
+from documents.models import Document, Event, DocumentStorage
 from identity.models import Identity
 from service import settings
 logger = logging.getLogger(__name__)
 
+URL = "http://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_REST_PORT + "/"
+
+def get_document(index):
+    response = requests.get(URL + f"/thesis/thesis/document/{index}")
+    return response.json()['document']
+
+def get_block_time(height):
+    response = requests.get(URL + f"/cosmos/staking/v1beta1/historical_info/{height}")
+    print(response.json())
+    return make_aware(datetime.strptime(response.json()['hist']['header']['time'].split('.')[0], '%Y-%m-%dT%H:%M:%S'))
+
 @sync_to_async
-def handle_authorization(event, height):
+def handle_authorization(event, height, _):
     ident = event['attributes']['account-id']
     caller = event['attributes']['caller']
     try:
@@ -28,8 +45,21 @@ def handle_authorization(event, height):
         logger.error(f"Ws handler run into error with data Identity: {ident}, height: {height}, caller: {caller}")
         traceback.print_exc()
 
+@sync_to_async
+def handle_document_created(event, height, tx_hash):
+    index = event['attributes']['document-id']
+    document = get_document(index)
+    document = Document.create(document)
+    event_time = get_block_time(height)
+    event = Event.create(json.dumps(event['attributes']), event_time, tx_hash, document)
+    with transaction.atomic():
+        document.save()
+        event.save()
+        DocumentStorage.create_records(document, document.users())
+
 EVENTS_HANDLERS = {
-    "entity-authorized": handle_authorization
+    "entity-authorized": handle_authorization,
+    "document-created": handle_document_created
 }
 EVENTS = EVENTS_HANDLERS.keys()
 
@@ -44,10 +74,11 @@ async def client(websocket_url):
                 if tx_result.get('data'):
                     value = tx_result['data']['value']['TxResult']
                     height = int(value['height'])
+                    tx_hash = tx_result['events']['tx.hash'][0]
                     events = list(filter(lambda x: x['type'] in EVENTS, value['result']['events']))
                     events = list(map(lambda x: parse_attributes(x), events))
                     for event in events:
-                        await EVENTS_HANDLERS.get(event['type'])(event, height)
+                        await EVENTS_HANDLERS.get(event['type'])(event, height, tx_hash)
 
         except websockets.ConnectionClosed:
             logger.error("Connection lost! Retrying..")

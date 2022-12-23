@@ -1,27 +1,23 @@
 import {
     SigningStargateClient,
-    defaultRegistryTypes as defaultStargateTypes,
-    createProtobufRpcClient, QueryClient
 } from "@cosmjs/stargate";
 import {getTestnetChainInfo} from "./chainInfo";
-import {createRegistry, MsgAuthorizeUrl} from "./basic"
+import {createRegistry, MsgCreateDocumentUrl} from "./basic"
 
 
 window.onload = async () => {
-    let button = document.getElementById("blockchain-account-authorize")
-    if(button) button.addEventListener("click", sendVerificationTx)
+    document
+        .getElementById("create-document")
+        .addEventListener("click", sendCreateDocTx)
 }
 
-const sendVerificationTx = async () => {
+async function sendCreateDocTx(){
     // Detect Keplr
     const { keplr } = window
     if (!keplr) {
         alert("You need to install Keplr")
         return
     }
-
-    const userID = document.getElementById("user-id").textContent.trim()
-
     const myRegistry = createRegistry()
     const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
     const signingClient = await SigningStargateClient.connectWithSigner(
@@ -33,10 +29,10 @@ const sendVerificationTx = async () => {
     // Get the address and balance of your user
     const account = (await offlineSigner.getAccounts())[0]
     let sendMsg = {
-        typeUrl: MsgAuthorizeUrl,
+        typeUrl: MsgCreateDocumentUrl,
         value: {
             creator: account.address,
-            accountId: userID
+            files: []
         }
     }
 
@@ -44,6 +40,6 @@ const sendVerificationTx = async () => {
             amount: [{ denom: "stake", amount: "1" }],
             gas: "200000",
         },);
-    alert(sendResult)
+    alert(sendResult.height)
 }
 

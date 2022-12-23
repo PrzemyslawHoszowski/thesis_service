@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+{% load static %}
+{% load compress %}
+{% block additional_js %}
+    {% compress js %}
+    <script type="module" src="{% static 'document_actions.js' %}"></script>
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+<button id="create-document">Create document</button>
+{% endblock %}
