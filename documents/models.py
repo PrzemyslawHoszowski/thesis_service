@@ -19,6 +19,7 @@ class Document(models.Model):
     signed = ArrayField(models.CharField(max_length=45))
     rejectionReasonHash = models.CharField(max_length=64)
     updatedAt = models.DateTimeField()
+    lastEditHeight = models.IntegerField(null=False)
 
     @classmethod
     def create(cls, json, updated_at):
@@ -32,6 +33,7 @@ class Document(models.Model):
             viewers=json['viewers'],
             signed=json['signed'],
             rejectionReasonHash=json['rejectionReason'],
+            lastBlockchainHeight=json['lastEditHeight'],
             updatedAt=updated_at
         )
 

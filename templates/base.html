@@ -12,6 +12,8 @@
     {% compress js %}
         <script type="module" src="{% static 'basic.js' %}"></script>
     {% endcompress %}
+    {% block css %}
+    {% endblock %}
     {% block additional_js %}
     {% endblock %}
     {% block head %}{% endblock %}

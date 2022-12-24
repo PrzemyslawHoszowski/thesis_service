@@ -8,10 +8,15 @@
     <script type="module" src="{% static 'document_actions.js' %}"></script>
     {% endcompress %}
 {% endblock %}
+{% block css %}
+       <link rel="stylesheet" type="text/css" href="{% static 'document.css' %}">
+{% endblock %}
 
 {% block content %}
     <h3>{{ doc.name }}</h3>
-    <span id="state">State: {{ doc.doc.state }}</span>
+    <div id="state">State: <span id="state-data">{{ doc.doc.state }}</span></div>
+    <div id="height">Last edit height: <span id="height-data">{{ doc.doc.lastEditHeight }}</span></div>
+    <div id="update-time">Last update time: <span id="update-time-data">{{ doc.doc.updatedAt }}</span></div>
     <div id="files">
         <table id="files-table">
             <thead>
@@ -32,10 +37,13 @@
             </thead>
             <tbody>
                 {% for person in roles.admins %}
-                    <tr><td>{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                    <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
                 {% endfor %}
+                <tr><td><input class="address-input" maxlength="45"><button class="expand-role">+</button></td></tr>
             </tbody>
         </table>
+
+            <button class="add-to-role">Send add to role transaction</button>
 
         <table id="editors-table">
             <thead>
@@ -43,9 +51,11 @@
             </thead>
             <tbody>
                 {% for person in roles.editors %}
-                    <tr><td>{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                    <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
                 {% endfor %}
+                <tr><td><button class="expand-role">+</button></td></tr>
             </tbody>
+
         </table>
 
         <table id="viewers-table">
@@ -54,34 +64,44 @@
             </thead>
             <tbody>
                 {% for person in roles.viewers %}
-                    <tr><td>{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                    <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                    <tr><td><button class="expand-role">+</button></td></tr>
                 {% endfor %}
+                <tr><td><button class="expand-role">+</button></td></tr>
             </tbody>
         </table>
 
         <table id="signers-table">
             <thead>
-                <tr><th>Remaining Signers</th></tr>
+                <tr><th>{% if doc.doc.state != 'Editing' %} Remaining signers {% else %} Signers {% endif %}</th></tr>
             </thead>
             <tbody>
                 {% for person in roles.remaining_signers %}
-                    <tr><td>{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                    <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
                 {% endfor %}
+                {% if doc.doc.state == 'Editing' %}
+                    <tr><td><button class="expand-role">+</button></td></tr>
+                {% endif %}
             </tbody>
         </table>
+
+
         {% if doc.doc.rejection_reason != '' %}
             <span>Rejection reason: doc.doc.rejection_reason</span>
-        {% else %}
-        <table id="signers-table">
-            <thead>
-                <tr><th>Signed</th></tr>
-            </thead>
-            <tbody>
-                {% for person in roles.signed %}
-                    <tr><td>{{ person.name }} {{ person.blockchain_address }}</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% elif doc.doc.state != 'Editing' %}
+            <table id="signers-table">
+                <thead>
+                    <tr><th>Signed</th></tr>
+                </thead>
+                <tbody>
+                    {% for person in roles.signed %}
+                        <tr><td>{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if can_sign %}
+                <button id="sign_document">Sign document</button>
+            {% endif %}
         {% endif %}
     </div>
 {% endblock %}
