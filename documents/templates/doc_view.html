@@ -68,7 +68,6 @@
             <tbody id="role-table-body-viewer">
                 {% for person in roles.viewers %}
                     <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
-                    <tr><td><button class="expand-role">+</button></td></tr>
                 {% endfor %}
                 <tr class="new-role"><td><input class="address-input" name="viewer-input" maxlength="45"><button class="expand-role" name="viewer">+</button></td></tr>
 
@@ -77,6 +76,7 @@
         {% if can_add_user %}
         <button class="add-to-role" name="viewer">Send add to role transaction</button>
         {% endif %}
+
         <table id="signers-table">
             <thead>
                 <tr><th>{% if doc.doc.state != 'Editing' %} Remaining signers {% else %} Signers {% endif %}</th></tr>

@@ -33,9 +33,22 @@ class Document(models.Model):
             viewers=json['viewers'],
             signed=json['signed'],
             rejectionReasonHash=json['rejectionReason'],
-            lastBlockchainHeight=json['lastEditHeight'],
+            lastEditHeight=json['lastEditHeight'],
             updatedAt=updated_at
         )
+
+    def update(self, json, updated_at):
+        self.state = json['state']
+        self.files = json['files']
+        self.admins = json['admins']
+        self.editors = json['editors']
+        self.signers = json['signers']
+        self.viewers = json['viewers']
+        self.signed = json['signed']
+        self.rejectionReasonHash = json['rejectionReason']
+        self.lastEditHeight = json['lastEditHeight']
+        self.updatedAt = updated_at
+        return self
 
     def translated_roles(self):
         self.get_identities_mapping()
@@ -85,8 +98,14 @@ class DocumentStorage(models.Model):
 
     @classmethod
     def create_records(cls, document, identities):
-        for identity in identities:
-            DocumentStorage(doc=document, user=identity.user).save()
+        document_users = set(map(lambda x: x.user, DocumentStorage.objects.filter(doc=document)))
+        users = set(map(lambda x: x.user, identities))
+        to_delete = document_users - users
+        to_append = users - document_users
+
+        for user in to_append:
+            DocumentStorage(doc=document, user=user).save()
+        DocumentStorage.objects.filter(doc=document, user__in=to_delete).delete()
 
     @classmethod
     def get_user_documents(cls, user, filter_hidden=True):

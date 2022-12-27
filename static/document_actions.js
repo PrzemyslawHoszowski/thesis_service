@@ -54,7 +54,6 @@ async function SendAddToRoleTx(element) {
             role: name[0].toUpperCase() + name.substring(1) + "s",
             addresses: getAddresses(input)
         }
-    alert(innerMsg.addresses)
     let sendMsg = {
         typeUrl: MsgAddUsersUrl,
         value: {
@@ -81,6 +80,5 @@ function getAddresses(input){
 }
 
 function validateAddress(address){
-    alert(fromBech32(address))
     return address
 }
