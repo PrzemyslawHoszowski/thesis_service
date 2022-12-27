@@ -18,7 +18,7 @@ window.onload = async () => {
 function createInputField(roleName){
     let newRow = document.createElement("tr")
     newRow.setAttribute("class", "new-role")
-    newRow.innerHTML = "<td><input class=\"address-input\" name=\"" + roleName + "\" maxlength=\"45\">" +
+    newRow.innerHTML = "<td><input class=\"address-input\" name=\"" + roleName + "-input\" maxlength=\"45\">" +
         "<button class=\"expand-role\" name=\""+ roleName + "\">+</button></td>"
     newRow.getElementsByClassName("expand-role")[0].addEventListener('click', expandRoles)
     return newRow
@@ -80,5 +80,7 @@ function getAddresses(input){
 }
 
 function validateAddress(address){
+    fromBech32(address)
+    alert(address)
     return address
 }
