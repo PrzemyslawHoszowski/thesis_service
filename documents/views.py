@@ -17,6 +17,7 @@ def document_view(request, doc_index):
     user_identity = Identity.objects.filter(user=request.user).get()
     # todo implement accept document mechanism to allow to share/hide personal data with others
     roles =  document_storage.doc.translated_roles()
+    print(roles)
     user_address = user_identity.blockchain_address
     can_sign = user_address in document_storage.doc.signers and \
                user_address not in document_storage.doc.signed

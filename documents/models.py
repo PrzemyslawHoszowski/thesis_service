@@ -59,7 +59,7 @@ class Document(models.Model):
             "editors": list(map(mapping, self.editors)),
             "remaining_signers": list(map(mapping, remaining)),
             "signed": list(map(mapping, self.signed)),
-            "viewers": list(map(mapping, self.editors)),
+            "viewers": list(map(mapping, self.viewers)),
         }
 
     def get_identities_mapping(self):

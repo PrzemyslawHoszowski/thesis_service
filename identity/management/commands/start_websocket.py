@@ -26,7 +26,6 @@ def get_document(index):
 
 def get_block_time(height):
     response = requests.get(URL + f"/cosmos/staking/v1beta1/historical_info/{height}")
-    print(response.json())
     return make_aware(datetime.strptime(response.json()['hist']['header']['time'].split('.')[0], '%Y-%m-%dT%H:%M:%S'))
 
 @sync_to_async
@@ -50,7 +49,6 @@ def handle_document_created(event, height, tx_hash):
     index = event['attributes']['document-id']
     event_time = get_block_time(height)
     document = get_document(index)
-    print(document)
     document = Document.create(document, event_time)
     event = Event.create(json.dumps(event['attributes']), event_time, tx_hash, document)
     with transaction.atomic():
@@ -77,6 +75,9 @@ EVENTS_HANDLERS = {
     "document-created": handle_document_created,
     "document-users-added": handle_document_update,
     "document-signed": handle_document_update,
+    "document-users-removed": handle_document_update,
+    "document-files-changed": handle_document_update,
+    "document-signature-rejected": handle_document_update
 }
 EVENTS = EVENTS_HANDLERS.keys()
 
