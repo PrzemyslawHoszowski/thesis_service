@@ -53,12 +53,13 @@ class Document(models.Model):
     def translated_roles(self):
         self.get_identities_mapping()
         remaining = set(self.signers) - set(self.signed)
+        mapping = lambda x: self.identities_mapping.get(x, x)
         return {
-            "admins": list(map(self.identities_mapping.get, self.admins)),
-            "editors": list(map(self.identities_mapping.get, self.editors)),
-            "remaining_signers": list(map(self.identities_mapping.get, remaining)),
-            "signed": list(map(self.identities_mapping.get, self.signed)),
-            "viewers": list(map(self.identities_mapping.get, self.editors)),
+            "admins": list(map(mapping, self.admins)),
+            "editors": list(map(mapping, self.editors)),
+            "remaining_signers": list(map(mapping, remaining)),
+            "signed": list(map(mapping, self.signed)),
+            "viewers": list(map(mapping, self.editors)),
         }
 
     def get_identities_mapping(self):
