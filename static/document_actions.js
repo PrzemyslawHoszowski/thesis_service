@@ -1,7 +1,7 @@
-import {createRegistry, MsgAddUsersUrl, MsgCreateDocumentUrl} from "./basic";
+import {createRegistry, MsgAddUsersUrl, MsgSignDocumentUrl} from "./basic";
 import {getTestnetChainInfo} from "./chainInfo";
 import {SigningStargateClient} from "@cosmjs/stargate";
-import {fromBech32} from "@cosmjs/encoding"
+import {fromBech32} from "@cosmjs/encoding";
 
 window.onload = async () => {
     let addElementButtons = document.getElementsByClassName("expand-role");
@@ -11,7 +11,11 @@ window.onload = async () => {
 
     let addToRoleButtons = document.getElementsByClassName("add-to-role");
     for (let i = 0; i < addToRoleButtons.length; i++) {
-        addToRoleButtons[i].addEventListener('click', SendAddToRoleTx, false)
+        addToRoleButtons[i].addEventListener('click', SendAddToRoleTx, false);
+    }
+    let signButton = document.getElementById("sign-button")
+    if (signButton){
+        signButton.addEventListener('click', sendSignDocumentTx, false);
     }
 }
 
@@ -48,12 +52,7 @@ async function SendAddToRoleTx(element) {
 
     // Get the address and balance of your user
     const account = (await offlineSigner.getAccounts())[0]
-    let innerMsg = {
-            creator: account.address,
-            documentId: getDocumentId(),
-            role: name[0].toUpperCase() + name.substring(1) + "s",
-            addresses: getAddresses(input)
-        }
+
     let sendMsg = {
         typeUrl: MsgAddUsersUrl,
         value: {
@@ -84,3 +83,41 @@ function validateAddress(address){
     alert(address)
     return address
 }
+
+function getLastEditHeight(){
+    return document.getElementById("height-data").innerText
+}
+
+async function sendSignDocumentTx() {
+    const {keplr} = window
+    if (!keplr) {
+        alert("You need to install Keplr")
+        return
+    }
+    const myRegistry = createRegistry()
+    const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
+    const signingClient = await SigningStargateClient.connectWithSigner(
+        getTestnetChainInfo().rpc,
+        offlineSigner,
+        {registry: myRegistry}
+    )
+
+    // Get the address and balance of your user
+    const account = (await offlineSigner.getAccounts())[0]
+
+    let sendMsg = {
+        typeUrl: MsgSignDocumentUrl,
+        value: {
+            creator: account.address,
+            documentId: getDocumentId(),
+            lastEditHeight: getLastEditHeight()
+        }
+    }
+
+    let sendResult = await signingClient.signAndBroadcast(account.address, [sendMsg,], {
+        amount: [{denom: "stake", amount: "1"}],
+        gas: "200000",
+    },);
+    alert(sendResult.height)
+}
+

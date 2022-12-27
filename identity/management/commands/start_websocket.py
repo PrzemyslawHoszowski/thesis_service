@@ -59,7 +59,7 @@ def handle_document_created(event, height, tx_hash):
         DocumentStorage.create_records(document, document.users())
 
 @sync_to_async
-def handle_document_user_added(event, height, tx_hash):
+def handle_document_update(event, height, tx_hash):
     index = event['attributes']['document-id']
     event_time = get_block_time(height)
     document_json = get_document(index)
@@ -75,7 +75,8 @@ def handle_document_user_added(event, height, tx_hash):
 EVENTS_HANDLERS = {
     "entity-authorized": handle_authorization,
     "document-created": handle_document_created,
-    "document-users-added": handle_document_user_added,
+    "document-users-added": handle_document_update,
+    "document-signed": handle_document_update,
 }
 EVENTS = EVENTS_HANDLERS.keys()
 

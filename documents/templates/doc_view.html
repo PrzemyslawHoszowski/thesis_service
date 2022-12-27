@@ -25,12 +25,12 @@
             </thead>
             <tbody>
                 {% for file in doc.doc.files %}
-                    <tr><td>{{ file }}</td></tr>
+                    <tr><td name="document-file">{{ file }}</td></tr>
                 {% endfor %}
             </tbody>
         </table>
-
     </div>
+    <button id="sign-button" {% if not can_sign %} style="display: none" {% endif %}>Sign</button>
     <div id="roles">
         <table id="admins-table">
             <thead>
@@ -38,7 +38,11 @@
             </thead>
             <tbody id="role-table-body-admin">
                 {% for person in roles.admins %}
-                    <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                    {% if person.blockchain_address %}
+                        <tr><td class="existing-role">{{ person.name }}<span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                    {% else %}
+                        <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
+                    {% endif %}
                 {% endfor %}
                 <tr class="new-role"><td><input class="address-input" name="admin-input" maxlength="45"><button class="expand-role" name="admin">+</button></td></tr>
             </tbody>
@@ -52,8 +56,12 @@
             </thead>
             <tbody id="role-table-body-editor">
                 {% for person in roles.editors %}
-                    <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
-                {% endfor %}
+                    {% if person.blockchain_address %}
+                        <tr><td class="existing-role">{{ person.name }}<span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                    {% else %}
+                        <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
+                    {% endif %}
+              {% endfor %}
                 <tr class="new-role"><td><input class="address-input" name="editor-input" maxlength="45"><button class="expand-role" name="editor">+</button></td></tr>
             </tbody>
 
@@ -67,7 +75,11 @@
             </thead>
             <tbody id="role-table-body-viewer">
                 {% for person in roles.viewers %}
-                    <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                     {% if person.blockchain_address %}
+                        <tr><td class="existing-role">{{ person.name }}<span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                    {% else %}
+                        <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
+                    {% endif %}
                 {% endfor %}
                 <tr class="new-role"><td><input class="address-input" name="viewer-input" maxlength="45"><button class="expand-role" name="viewer">+</button></td></tr>
 
@@ -83,7 +95,11 @@
             </thead>
             <tbody id="role-table-body-signer">
                 {% for person in roles.remaining_signers %}
-                    <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                    {% if person.blockchain_address %}
+                        <tr><td class="existing-role">{{ person.name }}<span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                    {% else %}
+                        <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
+                    {% endif %}
                 {% endfor %}
                 {% if doc.doc.state == 'Editing' %}
                     <tr class="new-role"><td><input class="address-input" name="signer-input" maxlength="45"><button class="expand-role" name="signer">+</button></td></tr>
@@ -103,7 +119,11 @@
                 </thead>
                 <tbody>
                     {% for person in roles.signed %}
-                        <tr><td>{{ person.name }} {{ person.blockchain_address }}</td></tr>
+                        {% if person.blockchain_address %}
+                            <tr><td class="existing-role">{{ person.name }} <span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                        {% else %}
+                            <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
