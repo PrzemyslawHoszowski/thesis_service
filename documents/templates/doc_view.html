@@ -39,7 +39,7 @@
             <tbody id="role-table-body-admin">
                 {% for person in roles.admins %}
                     {% if person.blockchain_address %}
-                        <tr><td class="existing-role">{{ person.name }}<span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                        <tr><td class="existing-role">{{ person.name }} <span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
                     {% else %}
                         <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
                     {% endif %}
@@ -57,7 +57,7 @@
             <tbody id="role-table-body-editor">
                 {% for person in roles.editors %}
                     {% if person.blockchain_address %}
-                        <tr><td class="existing-role">{{ person.name }}<span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                        <tr><td class="existing-role">{{ person.name }} <span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
                     {% else %}
                         <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
                     {% endif %}
@@ -76,7 +76,7 @@
             <tbody id="role-table-body-viewer">
                 {% for person in roles.viewers %}
                      {% if person.blockchain_address %}
-                        <tr><td class="existing-role">{{ person.name }}<span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                        <tr><td class="existing-role">{{ person.name }} <span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
                     {% else %}
                         <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
                     {% endif %}
@@ -89,26 +89,28 @@
         <button class="add-to-role" name="viewer">Send add to role transaction</button>
         {% endif %}
 
-        <table id="signers-table">
-            <thead>
-                <tr><th>{% if doc.doc.state != 'Editing' %} Remaining signers {% else %} Signers {% endif %}</th></tr>
-            </thead>
-            <tbody id="role-table-body-signer">
-                {% for person in roles.remaining_signers %}
-                    {% if person.blockchain_address %}
-                        <tr><td class="existing-role">{{ person.name }}<span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
-                    {% else %}
-                        <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
+        {% if doc.doc.state != "Signed" %}
+            <table id="signers-table">
+                <thead>
+                    <tr><th>{% if doc.doc.state != 'Editing' %} Remaining signers {% else %} Signers {% endif %}</th></tr>
+                </thead>
+                <tbody id="role-table-body-signer">
+                    {% for person in roles.remaining_signers %}
+                        {% if person.blockchain_address %}
+                            <tr><td class="existing-role">{{ person.name }} <span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                        {% else %}
+                            <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% if doc.doc.state == 'Editing' %}
+                        <tr class="new-role"><td><input class="address-input" name="signer-input" maxlength="45"><button class="expand-role" name="signer">+</button></td></tr>
                     {% endif %}
-                {% endfor %}
-                {% if doc.doc.state == 'Editing' %}
-                    <tr class="new-role"><td><input class="address-input" name="signer-input" maxlength="45"><button class="expand-role" name="signer">+</button></td></tr>
-                {% endif %}
-            </tbody>
-        </table>
+                </tbody>
+            </table>
 
-        {% if can_add_user %}
-        <button class="add-to-role" name="signer">Send add to role transaction</button>
+            {% if can_add_user %}
+            <button class="add-to-role" name="signer">Send add to role transaction</button>
+            {% endif %}
         {% endif %}
         {% if doc.doc.rejection_reason != '' %}
             <span>Rejection reason: doc.doc.rejection_reason</span>
