@@ -14,6 +14,7 @@
 
 {% block content %}
     <h3>{{ doc.name }}</h3>
+    <div id="doc-id">Document Id: <span id="document-id-data">{{ doc.doc.index }}</span></div>
     <div id="state">State: <span id="state-data">{{ doc.doc.state }}</span></div>
     <div id="height">Last edit height: <span id="height-data">{{ doc.doc.lastEditHeight }}</span></div>
     <div id="update-time">Last update time: <span id="update-time-data">{{ doc.doc.updatedAt }}</span></div>
@@ -35,57 +36,64 @@
             <thead>
                 <tr><th>Admins</th></tr>
             </thead>
-            <tbody>
+            <tbody id="role-table-body-admin">
                 {% for person in roles.admins %}
                     <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
                 {% endfor %}
-                <tr><td><input class="address-input" maxlength="45"><button class="expand-role">+</button></td></tr>
+                <tr class="new-role"><td><input class="address-input" name="admin-input" maxlength="45"><button class="expand-role" name="admin">+</button></td></tr>
             </tbody>
         </table>
-
-            <button class="add-to-role">Send add to role transaction</button>
-
+        {% if can_add_user %}
+            <button class="add-to-role" name="admin">Send add to role transaction</button>
+        {% endif %}
         <table id="editors-table">
             <thead>
                 <tr><th>Editors</th></tr>
             </thead>
-            <tbody>
+            <tbody id="role-table-body-editor">
                 {% for person in roles.editors %}
                     <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
                 {% endfor %}
-                <tr><td><button class="expand-role">+</button></td></tr>
+                <tr class="new-role"><td><input class="address-input" name="editor-input" maxlength="45"><button class="expand-role" name="editor">+</button></td></tr>
             </tbody>
 
         </table>
-
+        {% if can_add_user %}
+        <button class="add-to-role" name="editor">Send add to role transaction</button>
+        {% endif %}
         <table id="viewers-table">
             <thead>
                 <tr><th>Viewers</th></tr>
             </thead>
-            <tbody>
+            <tbody id="role-table-body-viewer">
                 {% for person in roles.viewers %}
                     <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
                     <tr><td><button class="expand-role">+</button></td></tr>
                 {% endfor %}
-                <tr><td><button class="expand-role">+</button></td></tr>
+                <tr class="new-role"><td><input class="address-input" name="viewer-input" maxlength="45"><button class="expand-role" name="viewer">+</button></td></tr>
+
             </tbody>
         </table>
-
+        {% if can_add_user %}
+        <button class="add-to-role" name="viewer">Send add to role transaction</button>
+        {% endif %}
         <table id="signers-table">
             <thead>
                 <tr><th>{% if doc.doc.state != 'Editing' %} Remaining signers {% else %} Signers {% endif %}</th></tr>
             </thead>
-            <tbody>
+            <tbody id="role-table-body-signer">
                 {% for person in roles.remaining_signers %}
                     <tr><td class="existing-role">{{ person.name }} {{ person.blockchain_address }}</td></tr>
                 {% endfor %}
                 {% if doc.doc.state == 'Editing' %}
-                    <tr><td><button class="expand-role">+</button></td></tr>
+                    <tr class="new-role"><td><input class="address-input" name="signer-input" maxlength="45"><button class="expand-role" name="signer">+</button></td></tr>
                 {% endif %}
             </tbody>
         </table>
 
-
+        {% if can_add_user %}
+        <button class="add-to-role" name="signer">Send add to role transaction</button>
+        {% endif %}
         {% if doc.doc.rejection_reason != '' %}
             <span>Rejection reason: doc.doc.rejection_reason</span>
         {% elif doc.doc.state != 'Editing' %}
@@ -104,4 +112,5 @@
             {% endif %}
         {% endif %}
     </div>
+    <br><br><br><br><br><br><br>
 {% endblock %}
