@@ -88,6 +88,7 @@ async def client(websocket_url):
         try:
             async for message in websocket:
             # Process message received on the connection.
+                print(json.loads(message))
                 tx_result = json.loads(message)['result']
                 if tx_result.get('data'):
                     value = tx_result['data']['value']['TxResult']

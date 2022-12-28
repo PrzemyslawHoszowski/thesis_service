@@ -33,7 +33,10 @@
             </tbody>
         </table>
     </div>
-    <button id="sign-button" {% if not can_sign %} style="display: none" {% endif %}>Sign</button>
+    {% if can_sign %}
+        <button id="sign-button">Sign</button>
+        <button id="reject-button">Reject</button>
+    {% endif %}
     <div id="roles">
         <table id="admins-table">
             <thead>
