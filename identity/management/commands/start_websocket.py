@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import hashlib
 from datetime import datetime
 
 import requests
@@ -121,6 +122,10 @@ def decode_base64(data):
     base64_encoded_data = base64.b64decode(data)
     base64_message = base64_encoded_data.decode('utf-8')
     return base64_message
+
+def get_tx_hash(tx):
+    tx_bytes = base64.b64decode(tx)
+    return hashlib.sha256(tx_bytes).hexdigest()
 
 class Command(BaseCommand):
     def handle(self, *args, **options):

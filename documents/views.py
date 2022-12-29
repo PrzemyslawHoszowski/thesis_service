@@ -5,7 +5,7 @@ from django.views.generic.edit import FormView
 from django.shortcuts import get_object_or_404
 
 from .forms import FileFieldForm
-from documents.models import DocumentStorage, Document, StoredFile
+from documents.models import DocumentStorage, Document, StoredFile, Event
 from identity.models import Identity
 
 
@@ -21,19 +21,22 @@ def document_view(request, doc_index):
     user_identity = Identity.objects.filter(user=request.user).get()
     # todo implement accept document mechanism to allow to share/hide personal data with others
     roles =  document_storage.doc.translated_roles()
-    print(roles)
     user_address = user_identity.blockchain_address
     can_sign = user_address in document_storage.doc.signers and \
                user_address not in document_storage.doc.signed
     can_add_user = user_address in document_storage.doc.admins
     can_edit = user_address in document_storage.doc.admins or user_address in document_storage.doc.editors
+    events = Event.objects.filter(document=document_storage.doc).order_by("date")
+    events = list(map(lambda event: event.attr_to_list(), events))
+    print(events[0].attr)
     return render(request, 'doc_view.html',
                   {
                     'doc': document_storage,
                     'roles': roles,
                     'can_sign': can_sign,
                     'can_add_user': can_add_user,
-                    'can_edit': can_edit
+                    'can_edit': can_edit,
+                    'events': events,
                   })
 
 class FileFieldFormView(FormView):

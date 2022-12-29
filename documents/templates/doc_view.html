@@ -144,5 +144,19 @@
             </table>
         {% endif %}
     </div>
+    <div>
+        <h3>Events</h3>
+        {% for event in events %}
+            <div class="event-div">
+                <span class="key">Transaction hash</span>: <span class="value"> {{ event.txHash }}</span>
+                <br><span class="key">Date</span>: <span class="value"> {{ event.date }}</span>
+                {% for attr in event.attr %}
+                    {% if attr.0 != "document-id" %}
+                        <br><span class="key">{{ attr.0 }}</span>: <span class="value"> {{ attr.1 }}</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
     <br><br><br><br><br><br><br>
 {% endblock %}

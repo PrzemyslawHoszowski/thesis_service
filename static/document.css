@@ -9,3 +9,15 @@
 .existing-role{
     cursor: pointer;
 }
+
+.event-div{
+    border-style: ridge;
+    margin: 5px;
+    padding:3px;
+    border-radius:20px;
+    word-break: break-all
+}
+
+.key{
+    font-weight: bold;
+}

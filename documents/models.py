@@ -1,3 +1,4 @@
+import json
 import uuid
 
 from django.contrib.auth.models import User
@@ -98,6 +99,10 @@ class Event(models.Model):
     def create(cls, attr, date, tx_hash, document):
         return cls(attr=attr, date=date, txHash=tx_hash, document=document)
 
+    def attr_to_list(self):
+        self.attr = json.loads(self.attr).items()
+        print(self.attr)
+        return self
 
 class StoredFile(models.Model):
     fileHashBase16 = models.CharField(max_length=64)
