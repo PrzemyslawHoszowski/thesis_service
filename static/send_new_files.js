@@ -6,7 +6,6 @@ window.onload = async () => {
     document.getElementById("select-files-form").addEventListener("submit", sendEditFilesTx)
 }
 
-
 async function sendEditFilesTx(element) {
     element.preventDefault()
     const {keplr} = window
@@ -53,6 +52,5 @@ function getSelectedFiles(){
     for (let i = 0; i < checkboxes.length; i++) {
       array.push(checkboxes[i].id)
     }
-    alert(array)
     return array
 }

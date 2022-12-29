@@ -32,6 +32,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% if can_edit %}
+            <a href="{% url 'documents:doc_files' doc.doc.index %}"><button>Edit files</button></a>
+        {% endif %}
     </div>
     {% if can_sign %}
         <button id="sign-button">Sign</button>

@@ -12,7 +12,7 @@
 
 {% block content %}
     <br>
-    <h3>Select files from the list for next version of document <span id="document-id-data">{{ doc.index }}</span></h3>
+    <h3>Select files from the list for next version of <a href="{% url "documents:doc" doc.index %}"> document <span id="document-id-data">{{ doc.index }}</span></a></h3>
     <form id="select-files-form">
         {% for file in files %}
             <input type="checkbox" id="{{ file.0.fileHashBase16 }}" {% if file.1 %} checked {% endif %}>
@@ -23,8 +23,8 @@
 
     <h3>Submit new files</h3>
     <form method="post" enctype=multipart/form-data>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Upload">
-</form>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Upload">
+    </form>
 {% endblock %}

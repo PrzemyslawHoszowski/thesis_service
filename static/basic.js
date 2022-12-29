@@ -21,7 +21,7 @@ export function createRegistry() {
     myRegistry.register(MsgAddUsersUrl, MsgAddUsers);
     myRegistry.register(MsgSignDocumentUrl, MsgSignDocument);
     myRegistry.register(MsgRemoveUsersUrl, MsgRemoveUsers);
-    myRegistry.register(MsgEditFilesUrl, MsgEditFiles); // todo
+    myRegistry.register(MsgEditFilesUrl, MsgEditFiles);
     myRegistry.register(MsgRejectSignatureUrl, MsgRejectSignature);
     return myRegistry
 }
