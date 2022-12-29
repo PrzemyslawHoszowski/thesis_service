@@ -1,7 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.db import transaction, IntegrityError
+from django.shortcuts import render, redirect
+from django.views.generic.edit import FormView
+from django.shortcuts import get_object_or_404
 
-from documents.models import DocumentStorage
+from .forms import FileFieldForm
+from documents.models import DocumentStorage, Document, StoredFile
 from identity.models import Identity
 
 
@@ -31,3 +35,45 @@ def document_view(request, doc_index):
                     'can_add_user': can_add_user,
                     'can_edit': can_edit
                   })
+
+class FileFieldFormView(FormView):
+    form_class = FileFieldForm
+    template_name = 'choose_files.html'
+
+    # make login verification
+    def get(self, request, *args, **kwargs):
+        document_index = kwargs['doc_index']
+        form = self.get_form_class()
+        doc = get_object_or_404(Document, pk=document_index)
+        attached_files = StoredFile.objects.filter(doc=doc)
+        context = {
+            'form': form,
+            'doc': doc,
+            'files': doc.mark_used_files(attached_files)
+        }
+        return render(request, self.template_name, context)
+    def post(self, request, *args, **kwargs):
+        document_index = kwargs['doc_index']
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        files = request.FILES.getlist('files')
+        if form.is_valid():
+            doc = get_object_or_404(Document, pk=document_index)
+            new_files = []
+            with transaction.atomic():
+                for f in files:
+                    stored_file = StoredFile.save_or_get_file(doc, f)
+                    new_files.append(stored_file.fileHashBase16)
+
+
+            attached_files = StoredFile.objects.filter(doc=doc)
+            context = {
+            'form': form,
+            'doc': doc,
+            'files': doc.mark_used_files(attached_files, new_files)
+            }
+            return render(request, self.template_name, context)
+        else:
+            return self.form_invalid(form)
+
+

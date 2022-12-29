@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+{% load static %}
+{% load compress %}
+
+{% block additional_js %}
+    {% compress js %}
+        <script type="module" src="{% static 'send_new_files.js' %}"></script>
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <br>
+    <h3>Select files from the list for next version of document <span id="document-id-data">{{ doc.index }}</span></h3>
+    <form id="select-files-form">
+        {% for file in files %}
+            <input type="checkbox" id="{{ file.0.fileHashBase16 }}" {% if file.1 %} checked {% endif %}>
+            <label for="{{ file.0.fileHashBase16 }}">{{ file.0.name }} {{ file.0.fileHashBase16}}</label><br>
+        {% endfor %}
+        <input type="submit" value="Choose">
+    </form><br><br>
+
+    <h3>Submit new files</h3>
+    <form method="post" enctype=multipart/form-data>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Upload">
+</form>
+{% endblock %}

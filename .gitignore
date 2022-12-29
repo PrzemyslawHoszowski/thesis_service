@@ -2,3 +2,4 @@ node_modules
 static/CACHE
 py_env
 static_collected/
+media/

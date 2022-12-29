@@ -2,7 +2,10 @@ import uuid
 
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
-from django.db import models
+from django.core.files.uploadedfile import UploadedFile
+from django.db import models, IntegrityError
+
+import hashlib
 
 from identity.models import Identity
 
@@ -11,7 +14,7 @@ class Document(models.Model):
     # common fields with blockchain
     index = models.IntegerField(unique=True, null=False, primary_key=True)
     state = models.CharField(max_length=20)
-    files = ArrayField(models.CharField(max_length=256))
+    files = ArrayField(models.CharField(max_length=64))
     admins = ArrayField(models.CharField(max_length=45))
     editors = ArrayField(models.CharField(max_length=45))
     signers = ArrayField(models.CharField(max_length=45))
@@ -80,6 +83,12 @@ class Document(models.Model):
         # todo make some mapping to valid string for authorized users
         return self.rejectionReasonHash
 
+    def mark_used_files(self, files_list, new_files=None):
+        new_files = new_files if new_files else []
+        # returns list of files with attached value true/false if file is attached to current version of document
+        return list(map(lambda file: (file, file.fileHashBase16 in self.files or file.fileHashBase16 in new_files), files_list))
+
+
 class Event(models.Model):
     attr = models.CharField(max_length=2000)
     date = models.DateTimeField()
@@ -88,6 +97,33 @@ class Event(models.Model):
     @classmethod
     def create(cls, attr, date, tx_hash, document):
         return cls(attr=attr, date=date, txHash=tx_hash, document=document)
+
+
+class StoredFile(models.Model):
+    fileHashBase16 = models.CharField(max_length=64)
+    doc = models.ForeignKey(Document, on_delete=models.CASCADE)
+    file = models.FileField(upload_to="uploads/")
+    name = models.CharField(max_length=100, null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['doc', 'fileHashBase16'], name='unique_document_fileHashBase16_combination'
+            )
+        ]
+    @classmethod
+    def save_or_get_file(cls, doc: Document, file: UploadedFile):
+        # name may differ
+        stored_file = StoredFile(doc=doc, file=file, name=file.name)
+        stored_file.save()
+
+        with stored_file.file.open('rb') as file_to_hash:
+            stored_file.fileHashBase16 = hashlib.sha256(file_to_hash.read()).hexdigest()
+        try:
+            stored_file.save()
+        except IntegrityError:
+            pass
+        return stored_file
 
 
 class DocumentStorage(models.Model):
