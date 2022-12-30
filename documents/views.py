@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db import transaction
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from django.views.generic.edit import FormView
 from django.shortcuts import get_object_or_404
 
@@ -17,7 +19,12 @@ def index(request):
 
 @login_required
 def document_view(request, doc_index):
-    document_storage = DocumentStorage.objects.filter(user=request.user, doc__index=doc_index).get()
+    try:
+        document_storage = DocumentStorage.objects.filter(user=request.user, doc__index=doc_index).get()
+    except DocumentStorage.DoesNotExist:
+        messages.error(request, "Unauthorized")
+        return redirect("documents:index")
+
     user_identity = Identity.objects.filter(user=request.user).get()
     # todo implement accept document mechanism to allow to share/hide personal data with others
     roles =  document_storage.doc.translated_roles()
@@ -48,11 +55,21 @@ class FileFieldFormView(FormView):
         document_index = kwargs['doc_index']
         form = self.get_form_class()
         doc = get_object_or_404(Document, pk=document_index)
+        try:
+            user_address = Identity.get_identity(request.user).blockchain_address
+            has_access = user_address in doc.entities()
+            if not has_access:
+                return HttpResponse('Unauthorized', status=401)
+        except:
+            return HttpResponse('Unauthorized', status=401)
+
+        can_edit = user_address in doc.admins or user_address in doc.editors
         attached_files = StoredFile.objects.filter(doc=doc)
         context = {
             'form': form,
             'doc': doc,
-            'files': doc.mark_used_files(attached_files)
+            'files': doc.mark_used_files(attached_files),
+            'can_edit': can_edit
         }
         return render(request, self.template_name, context)
     def post(self, request, *args, **kwargs):
@@ -62,18 +79,30 @@ class FileFieldFormView(FormView):
         files = request.FILES.getlist('files')
         if form.is_valid():
             doc = get_object_or_404(Document, pk=document_index)
-            new_files = []
-            with transaction.atomic():
-                for f in files:
-                    stored_file = StoredFile.save_or_get_file(doc, f)
-                    new_files.append(stored_file.fileHashBase16)
+            try:
+                user_address = Identity.get_identity(request.user).blockchain_address
+                has_access = user_address in doc.entities()
+                if not has_access:
+                    return HttpResponse('Unauthorized', status=401)
+            except:
+                return HttpResponse('Unauthorized', status=401)
 
+            can_edit = user_address in doc.admins or user_address in doc.editors
+            new_files = []
+            if can_edit:
+                with transaction.atomic():
+                    for f in files:
+                        stored_file = StoredFile.save_or_get_file(doc, f)
+                        new_files.append(stored_file.fileHashBase16)
+            else:
+                messages.error(request, "Can't edit document")
 
             attached_files = StoredFile.objects.filter(doc=doc)
             context = {
             'form': form,
             'doc': doc,
-            'files': doc.mark_used_files(attached_files, new_files)
+            'files': doc.mark_used_files(attached_files, new_files),
+            'can_edit': can_edit
             }
             return render(request, self.template_name, context)
         else:

@@ -44,6 +44,6 @@ const sendVerificationTx = async () => {
             amount: [{ denom: "stake", amount: "1" }],
             gas: "200000",
         },);
-    alert(sendResult)
+    alert(sendResult.height)
 }
 

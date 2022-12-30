@@ -13,18 +13,19 @@
 {% block content %}
     <br>
     <h3>Select files from the list for next version of <a href="{% url "documents:doc" doc.index %}"> document <span id="document-id-data">{{ doc.index }}</span></a></h3>
-    <form id="select-files-form">
+    <form id="select-files-form" class="form-check form-switch">
         {% for file in files %}
-            <input type="checkbox" id="{{ file.0.fileHashBase16 }}" {% if file.1 %} checked {% endif %}>
-            <label for="{{ file.0.fileHashBase16 }}">{{ file.0.name }} {{ file.0.fileHashBase16}}</label><br>
+            <input class="form-check-input" type="checkbox"  id="{{ file.0.fileHashBase16 }}" {% if file.1 %} checked {% endif %} {% if not can_edit %}disabled{% endif %}>
+            <label class="form-check-label" for="{{ file.0.fileHashBase16 }}">{{ file.0.name }} {{ file.0.fileHashBase16}}</label><br>
         {% endfor %}
-        <input type="submit" value="Choose">
+        <input type="submit" value="Choose" {% if not can_edit %}disabled{% endif %}>
     </form><br><br>
-
+    {% if can_edit %}
     <h3>Submit new files</h3>
-    <form method="post" enctype=multipart/form-data>
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Upload">
-    </form>
+        <form method="post" enctype=multipart/form-data>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Upload">
+        </form>
+    {% endif %}
 {% endblock %}

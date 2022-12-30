@@ -27,5 +27,9 @@ class Identity(models.Model):
     def to_identity_list(cls, addresses):
         return Identity.objects.filter(blockchain_address__in=addresses).select_related('user')
 
+    @classmethod
+    def get_identity(cls, user):
+        return Identity.objects.get(user=user)
+
     def name(self):
         return self.user.first_name + " " + self.user.last_name

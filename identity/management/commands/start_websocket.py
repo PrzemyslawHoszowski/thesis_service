@@ -54,7 +54,7 @@ def handle_authorization(event, height, _tx_hash, _event_time):
         logger.error(f"Ws handler run into error with data Identity: {ident}, height: {height}, caller: {caller}")
         traceback.print_exc()
 
-def handle_document_created(event, height, tx_hash, event_time):
+def handle_document_created(event, _height, tx_hash, event_time):
     index = event['attributes']['document-id']
     document = get_document(index)
     document = Document.create(document, event_time)
@@ -103,7 +103,7 @@ async def client(websocket_url):
 
 @sync_to_async
 def process_blocks_from_the_past():
-    last_processed = MetadataThesisService.objects.get()
+    last_processed = MetadataThesisService.objects.get_or_create(pk=1, defaults={"last_processed": 1})[0]
     height = last_processed.last_processed + 1
     while True:
         try:
@@ -122,9 +122,7 @@ def process_block(height):
         result = get_transaction_result(tx_hash)
         events = list(filter(lambda x: x['type'] in EVENTS, result['tx_result']['events']))
         events = list(map(lambda x: parse_attributes(x), events))
-        print(events)
         for event in events:
-            print(event['type'])
             EVENTS_HANDLERS.get(event['type'])(event, height, tx_hash, block_time)
     MetadataThesisService.objects.update(last_processed=height)
 
@@ -149,7 +147,6 @@ async def subscribe(websocket):
     )
 
 def parse_attributes(event):
-    print(event['attributes'])
     event['attributes'] = dict(map(lambda x: (decode_base64(x['key']), decode_base64(x['value'] if x['value'] else "")), event['attributes']))
     return event
 
@@ -164,6 +161,6 @@ def get_tx_hash(tx):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        URL = "ws://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_PORT + "/websocket"
-        logger.info(f"Connecting to websocket server {URL}")
-        asyncio.run(client(URL))
+        url = "ws://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_PORT + "/websocket"
+        logger.info(f"Connecting to websocket server {url}")
+        asyncio.run(client(url))

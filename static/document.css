@@ -4,6 +4,11 @@
 
 .to-delete{
     color: red;
+    border-left: red 3px solid !important;
+}
+
+.existing-role{
+    border-left: transparent 3px solid;
 }
 
 .existing-role{
@@ -20,4 +25,31 @@
 
 .key{
     font-weight: bold;
+}
+
+.role-btn{
+    float: right;
+    margin-left: 5px;
+}
+
+table{
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
+    margin-top: 12px !important;
+}
+
+td{
+    margin-bottom: 0px !important;
+}
+
+tr{
+    margin-bottom: 0px !important;
+}
+
+tbody > tr:last-child > td {
+  border-bottom: none !important;
+}
+
+.input-group{
+    margin-bottom: 0px !important;
 }

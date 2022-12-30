@@ -39,8 +39,7 @@ window.onload = async () => {
 function createInputField(roleName){
     let newRow = document.createElement("tr")
     newRow.setAttribute("class", "new-role")
-    newRow.innerHTML = "<td><input class=\"address-input\" name=\"" + roleName + "-input\" maxlength=\"45\">" +
-        "<button class=\"expand-role\" name=\""+ roleName + "\">+</button></td>"
+    newRow.innerHTML = "<tr class=\"new-role\"><td class=\"input-group mb-3\"><input class=\"address-input form-control\" name=\"" + roleName + "-input\" maxlength=\"45\"><button class=\"expand-role btn btn-outline-secondary\" name=\"" + roleName + "\">+</button></td></tr>"
     newRow.getElementsByClassName("expand-role")[0].addEventListener('click', expandRoles)
     return newRow
 }
@@ -98,7 +97,7 @@ function getAddresses(input){
 function getAddressesToDelete(target){
     let tmp = Array.from(target.parentElement.getElementsByClassName("to-delete"))
             .map(tdEl => filterAddresses(tdEl.getElementsByTagName("span"))[0].innerHTML)
-    alert(tmp[0])
+
     return tmp
 }
 
@@ -108,7 +107,6 @@ function filterAddresses(htmlList){
 
 function validateAddress(address){
     fromBech32(address)
-    alert(address)
     return address
 }
 

@@ -17,14 +17,14 @@
     {% if can_add_user %}
         <script id="can-change-role" type="text/plain"></script>
     {% endif %}
-    <div id="doc-id">Document Id: <span id="document-id-data">{{ doc.doc.index }}</span></div>
-    <div id="state">State: <span id="state-data">{{ doc.doc.state }}</span></div>
-    <div id="height">Last edit height: <span id="height-data">{{ doc.doc.lastEditHeight }}</span></div>
-    <div id="update-time">Last update time: <span id="update-time-data">{{ doc.doc.updatedAt }}</span></div>
+    <div id="doc-id"> <span class="key"> Document Id: </span> <span id="document-id-data">{{ doc.doc.index }}</span></div>
+    <div id="state"><span class="key">State: </span><span id="state-data">{{ doc.doc.state }}</span></div>
+    <div id="height"><span class="key">Last edit height: </span><span id="height-data">{{ doc.doc.lastEditHeight }}</span></div>
+    <div  id="update-time"><span class="key">Last update time: </span>  <span id="update-time-data">{{ doc.doc.updatedAt }}</span></div>
     <div id="files">
-        <table id="files-table">
+        <table id="files-table" class="table">
             <thead>
-                <tr><th>Files</th></tr>
+                <tr><th>Files <a href="{% url 'documents:doc_files' doc.doc.index %}" style="float: right"><button class="btn btn-link">{% if can_edit %}Edit files{% else %}Other files{% endif %}</button></a> </th></tr>
             </thead>
             <tbody>
                 {% for file in doc.doc.files %}
@@ -32,18 +32,20 @@
                 {% endfor %}
             </tbody>
         </table>
-        {% if can_edit %}
-            <a href="{% url 'documents:doc_files' doc.doc.index %}"><button>Edit files</button></a>
-        {% endif %}
     </div>
     {% if can_sign %}
         <button id="sign-button">Sign</button>
         <button id="reject-button">Reject</button>
     {% endif %}
     <div id="roles">
-        <table id="admins-table">
+        <table id="admins-table" class="table">
             <thead>
-                <tr><th>Admins</th></tr>
+                <tr><th>Admins
+                    {% if can_add_user %}
+                        <button class="role-btn remove-from-role btn btn-danger btn-sm" name="admin">Send remove transaction with marked users</button>
+                        <button class="role-btn add-to-role btn btn-info btn-sm" name="admin">Send add to role transaction</button>
+                    {% endif %}
+                </th></tr>
             </thead>
             <tbody id="role-table-body-admin">
                 {% for person in roles.admins %}
@@ -53,17 +55,16 @@
                         <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
                     {% endif %}
                 {% endfor %}
-                <tr class="new-role"><td><input class="address-input" name="admin-input" maxlength="45"><button class="expand-role" name="admin">+</button></td></tr>
+                <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="admin-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="admin">+</button></td></tr>
             </tbody>
         </table>
-        {% if can_add_user %}
-            <button class="add-to-role" name="admin">Send add to role transaction</button>
-            <button class="remove-from-role" name="admin">Send remove transaction with marked users</button>
-        {% endif %}
-        <table id="editors-table">
-            <thead>
-                <tr><th>Editors</th></tr>
-            </thead>
+        <table id="editors-table" class="table">
+                <tr><th>Editors
+                    {% if can_add_user %}
+                        <button class="role-btn remove-from-role btn btn-danger btn-sm" name="editor">Send remove transaction with marked users</button>
+                        <button class="role-btn add-to-role btn btn-info btn-sm" name="editor">Send add to role transaction</button>
+                    {% endif %}
+                </th></tr>
             <tbody id="role-table-body-editor">
                 {% for person in roles.editors %}
                     {% if person.blockchain_address %}
@@ -72,18 +73,17 @@
                         <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
                     {% endif %}
               {% endfor %}
-                <tr class="new-role"><td><input class="address-input" name="editor-input" maxlength="45"><button class="expand-role" name="editor">+</button></td></tr>
+                <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="editor-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="editor">+</button></td></tr>
             </tbody>
 
         </table>
-        {% if can_add_user %}
-            <button class="add-to-role" name="editor">Send add to role transaction</button>
-            <button class="remove-from-role" name="editor">Send remove transaction with marked users</button>
-        {% endif %}
-        <table id="viewers-table">
-            <thead>
-                <tr><th>Viewers</th></tr>
-            </thead>
+        <table id="viewers-table" class="table">
+                <tr><th>Viewers
+                    {% if can_add_user %}
+                        <button class="role-btn remove-from-role btn btn-danger btn-sm" name="viewer">Send remove transaction with marked users</button>
+                        <button class="role-btn add-to-role btn btn-info btn-sm" name="viewer">Send add to role transaction</button>
+                    {% endif %}
+                </th></tr>
             <tbody id="role-table-body-viewer">
                 {% for person in roles.viewers %}
                      {% if person.blockchain_address %}
@@ -92,19 +92,19 @@
                         <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
                     {% endif %}
                 {% endfor %}
-                <tr class="new-role"><td><input class="address-input" name="viewer-input" maxlength="45"><button class="expand-role" name="viewer">+</button></td></tr>
-
+                <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="viewer-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="viewer">+</button></td></tr>
             </tbody>
         </table>
-        {% if can_add_user %}
-        <button class="add-to-role" name="viewer">Send add to role transaction</button>
-            <button class="remove-from-role" name="viewer">Send remove transaction with marked users</button>
-        {% endif %}
 
         {% if doc.doc.state != "Signed" %}
-            <table id="signers-table">
+            <table id="signers-table" class="table">
                 <thead>
-                    <tr><th>{% if doc.doc.state != 'Editing' %} Remaining signers {% else %} Signers {% endif %}</th></tr>
+                    <tr><th>{% if doc.doc.state != 'Editing' %} Remaining signers {% else %} Signers {% endif %}
+                        {% if can_add_user %}
+                            <button class="role-btn remove-from-role btn btn-danger btn-sm" name="signer">Send remove transaction with marked users</button>
+                            <button class="role-btn add-to-role btn btn-info btn-sm" name="signer">Send add to role transaction</button>
+                        {% endif %}
+                    </th></tr>
                 </thead>
                 <tbody id="role-table-body-signer">
                     {% for person in roles.remaining_signers %}
@@ -115,20 +115,16 @@
                         {% endif %}
                     {% endfor %}
                     {% if doc.doc.state == 'Editing' %}
-                        <tr class="new-role"><td><input class="address-input" name="signer-input" maxlength="45"><button class="expand-role" name="signer">+</button></td></tr>
+                        <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="signer-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="signer">+</button></td></tr>
                     {% endif %}
                 </tbody>
             </table>
 
-            {% if can_add_user %}
-            <button class="add-to-role" name="signer">Send add to role transaction</button>
-            <button class="remove-from-role" name="signer">Send remove transaction with marked users</button>
-            {% endif %}
         {% endif %}
         {% if doc.doc.rejection_reason != '' %}
             <span>Rejection reason: doc.doc.rejection_reason</span>
         {% elif doc.doc.state != 'Editing' %}
-            <table id="signers-table">
+            <table id="signers-table" class="table">
                 <thead>
                     <tr><th>Signed</th></tr>
                 </thead>
@@ -147,7 +143,7 @@
     <div>
         <h3>Events</h3>
         {% for event in events %}
-            <div class="event-div">
+            <div class="event-div border border-2">
                 <span class="key">Transaction hash</span>: <span class="value"> {{ event.txHash }}</span>
                 <br><span class="key">Date</span>: <span class="value"> {{ event.date }}</span>
                 {% for attr in event.attr %}

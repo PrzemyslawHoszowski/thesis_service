@@ -62,7 +62,13 @@
             </a>
         {% endif %}
     </nav>
+
     <div class="container sidebar-right" >
+        {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">
+                    {{ message|safe }}
+                </div>
+        {% endfor %}
         {% block content %}
         {% endblock %}
     </div>
