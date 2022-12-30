@@ -13,9 +13,9 @@ from identity.models import Identity
 
 @login_required
 def index(request):
-    # todo if blockchain address isn't assigned to account notify user instead of showing add_document button
     docs = DocumentStorage.get_user_documents(request.user)
-    return render(request, 'doc_index.html', {'docs': docs})
+    is_address_assigned = not Identity.objects.get(user=request.user).blockchain_address is None
+    return render(request, 'doc_index.html', {'docs': docs, 'is_address_assigned': is_address_assigned})
 
 @login_required
 def document_view(request, doc_index):

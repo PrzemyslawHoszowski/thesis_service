@@ -10,23 +10,24 @@
 {% endblock %}
 
 {% block content %}
-<button id="create-document">Create document</button>
-    <table class="table table-striped">
-    <thead>
-    <tr id="headers">
-        <th scope="col" class="text-center az" data-defaultsign="nospan">Nazwa</th>
-        <th scope="col" class="text-center">Stan</th>
-        <th scope="col" class="text-center">Data</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for doc in docs %}
-        <tr id="{{ doc.doc.index }}">
-            <td class="text-center"><a href="{% url 'documents:doc' doc.doc.index %}"> {{ doc.name }} </a></td>
-            <td class="text-center">{{ doc.doc.state }}</td>
-            <td class="text-center">{{ doc.doc.updatedAt }}</td>
+    <h2>Your documents</h2>
+    <button id="create-document" class="btn btn-primary" {% if not is_address_assigned %}disabled{% endif %}>Create document</button>
+        <table class="table table-striped">
+        <thead>
+        <tr id="headers">
+            <th scope="col" class="text-center az" data-defaultsign="nospan">Nazwa</th>
+            <th scope="col" class="text-center">Stan</th>
+            <th scope="col" class="text-center">Data</th>
         </tr>
-    {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        {% for doc in docs %}
+            <tr id="{{ doc.doc.index }}">
+                <td class="text-center"><a href="{% url 'documents:doc' doc.doc.index %}"> {{ doc.name }} </a></td>
+                <td class="text-center">{{ doc.doc.state }}</td>
+                <td class="text-center">{{ doc.doc.updatedAt }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
