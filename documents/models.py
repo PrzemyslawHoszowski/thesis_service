@@ -167,3 +167,7 @@ class DocumentStorage(models.Model):
         if self._state.adding:
             self.name = self.id
         super().save(force_insert, force_update, using, update_fields)
+
+class MetadataThesisService(models.Model):
+    last_processed = models.IntegerField()
+
