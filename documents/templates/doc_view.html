@@ -27,8 +27,8 @@
                 <tr><th>Files <a href="{% url 'documents:doc_files' doc.doc.index %}" style="float: right"><button class="btn btn-link">{% if can_edit %}Edit files{% else %}Other files{% endif %}</button></a> </th></tr>
             </thead>
             <tbody>
-                {% for file in doc.doc.files %}
-                    <tr><td name="document-file">{{ file }}</td></tr>
+                {% for file in files %}
+                    <tr><td name="document-file"><a href="{% url 'documents:get_file' doc.doc.index file.1%}">{{ file.0 }}</a> <span style="float: right">0x{{ file.1 }}</span></td></tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -144,8 +144,8 @@
         <h3>Events</h3>
         {% for event in events %}
             <div class="event-div border border-2">
-                <span class="key">Transaction hash</span>: <span class="value"> {{ event.txHash }}</span>
-                <br><span class="key">Date</span>: <span class="value"> {{ event.date }}</span>
+                <span class="key">Transaction hash</span>: <span class="value"> 0x{{ event.txHash }}</span>
+                <br><span class="key">Block date</span>: <span class="value"> {{ event.date }}</span>
                 {% for attr in event.attr %}
                     {% if attr.0 != "document-id" %}
                         <br><span class="key">{{ attr.0 }}</span>: <span class="value"> {{ attr.1 }}</span>

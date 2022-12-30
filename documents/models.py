@@ -116,6 +116,11 @@ class StoredFile(models.Model):
                 fields=['doc', 'fileHashBase16'], name='unique_document_fileHashBase16_combination'
             )
         ]
+
+    @staticmethod
+    def query_to_dict(query_result):
+        return dict(map(lambda file: (file.fileHashBase16, file), query_result))
+
     @classmethod
     def save_or_get_file(cls, doc: Document, file: UploadedFile):
         # name may differ

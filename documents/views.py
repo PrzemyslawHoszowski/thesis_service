@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from django.shortcuts import render, redirect
 from django.views.generic.edit import FormView
 from django.shortcuts import get_object_or_404
@@ -15,6 +15,8 @@ from identity.models import Identity
 def index(request):
     docs = DocumentStorage.get_user_documents(request.user)
     is_address_assigned = not Identity.objects.get(user=request.user).blockchain_address is None
+    if not is_address_assigned:
+        messages.error(f"Please assign your blockchain wallet to account. <a href=\"identity/\">Here</a>")
     return render(request, 'doc_index.html', {'docs': docs, 'is_address_assigned': is_address_assigned})
 
 @login_required
@@ -29,16 +31,29 @@ def document_view(request, doc_index):
     # todo implement accept document mechanism to allow to share/hide personal data with others
     roles =  document_storage.doc.translated_roles()
     user_address = user_identity.blockchain_address
+
     can_sign = user_address in document_storage.doc.signers and \
                user_address not in document_storage.doc.signed
     can_add_user = user_address in document_storage.doc.admins
     can_edit = user_address in document_storage.doc.admins or user_address in document_storage.doc.editors
+
     events = Event.objects.filter(document=document_storage.doc).order_by("date")
     events = list(map(lambda event: event.attr_to_list(), events))
-    print(events[0].attr)
+
+    files = StoredFile.objects.filter(fileHashBase16__in=document_storage.doc.files, doc=document_storage.doc)
+    files_dict = StoredFile.query_to_dict(files)
+    files = []
+    for file in document_storage.doc.files:
+        file_v = files_dict.get(file)
+        if file_v:
+            files.append((file_v.name, file_v.fileHashBase16))
+        else:
+            files.append(("", file))
+
     return render(request, 'doc_view.html',
                   {
                     'doc': document_storage,
+                    'files': files,
                     'roles': roles,
                     'can_sign': can_sign,
                     'can_add_user': can_add_user,
@@ -46,11 +61,25 @@ def document_view(request, doc_index):
                     'events': events,
                   })
 
+@login_required
+def get_file(request, doc_index, file_hash):
+    doc = get_object_or_404(Document, pk=doc_index)
+    try:
+        user_address = Identity.get_identity(request.user).blockchain_address
+        has_access = user_address in doc.entities()
+        if not has_access:
+            return HttpResponse('Unauthorized', status=401)
+    except:
+        return HttpResponse('Unauthorized', status=401)
+
+    file = StoredFile.objects.get(doc=doc, fileHashBase16=file_hash)
+    return FileResponse(file.file.open())
+
+
 class FileFieldFormView(FormView):
     form_class = FileFieldForm
     template_name = 'choose_files.html'
 
-    # make login verification
     def get(self, request, *args, **kwargs):
         document_index = kwargs['doc_index']
         form = self.get_form_class()
@@ -72,6 +101,7 @@ class FileFieldFormView(FormView):
             'can_edit': can_edit
         }
         return render(request, self.template_name, context)
+
     def post(self, request, *args, **kwargs):
         document_index = kwargs['doc_index']
         form_class = self.get_form_class()
