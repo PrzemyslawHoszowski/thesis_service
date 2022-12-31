@@ -53,3 +53,9 @@ tbody > tr:last-child > td {
 .input-group{
     margin-bottom: 0px !important;
 }
+
+.doc-name-input{
+    border: none !important;
+    font-size: 20px !important;
+    font-weight:bold;
+}

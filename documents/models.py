@@ -101,7 +101,6 @@ class Event(models.Model):
 
     def attr_to_list(self):
         self.attr = json.loads(self.attr).items()
-        print(self.attr)
         return self
 
 class StoredFile(models.Model):

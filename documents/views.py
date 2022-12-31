@@ -27,6 +27,17 @@ def document_view(request, doc_index):
         messages.error(request, "Unauthorized")
         return redirect("documents:index")
 
+    if request.method == "POST":
+        try:
+            new_name = request.POST["new-name"]
+            if new_name.strip() != "":
+                document_storage.name = new_name
+                document_storage.save()
+            else:
+                messages.error(request, "Invalid name was given.")
+        except:
+            messages.error(request, "Encountered error during handling change name request.")
+
     user_identity = Identity.objects.filter(user=request.user).get()
     # todo implement accept document mechanism to allow to share/hide personal data with others
     roles =  document_storage.doc.translated_roles()

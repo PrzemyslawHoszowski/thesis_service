@@ -41,7 +41,6 @@ def get_block(height):
 def handle_authorization(event, height, _tx_hash, _event_time):
     ident = event['attributes']['account-id']
     caller = event['attributes']['caller']
-    print(f"handling authorization {ident} {caller}")
     try:
         ident = Identity.objects.get(id=ident)
         ident.blockchain_address = caller

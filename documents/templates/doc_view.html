@@ -13,14 +13,19 @@
 {% endblock %}
 
 {% block content %}
-    <h3>{{ doc.name }}</h3>
+    <form method="POST"><div class="input-group mb-3">
+        {% csrf_token %}
+        <input class="form-control doc-name-input" name="new-name" maxlength="45" value="{{ doc.name }}">
+        <input type="submit" hidden>
+    </div></form>
     {% if can_add_user %}
         <script id="can-change-role" type="text/plain"></script>
     {% endif %}
     <div id="doc-id"> <span class="key"> Document Id: </span> <span id="document-id-data">{{ doc.doc.index }}</span></div>
     <div id="state"><span class="key">State: </span><span id="state-data">{{ doc.doc.state }}</span></div>
     <div id="height"><span class="key">Last edit height: </span><span id="height-data">{{ doc.doc.lastEditHeight }}</span></div>
-    <div  id="update-time"><span class="key">Last update time: </span>  <span id="update-time-data">{{ doc.doc.updatedAt }}</span></div>
+    <div id="update-time"><span class="key">Last update time: </span>  <span id="update-time-data">{{ doc.doc.updatedAt }}</span></div>
+
     <div id="files">
         <table id="files-table" class="table">
             <thead>
@@ -34,8 +39,8 @@
         </table>
     </div>
     {% if can_sign %}
-        <button id="sign-button">Sign</button>
-        <button id="reject-button">Reject</button>
+        <button class="remove-from-role btn btn-info btn-sm" id="sign-button">Sign</button>
+        <button class="add-to-role btn btn-danger btn-sm" id="reject-button">Reject</button>
     {% endif %}
     <div id="roles">
         <table id="admins-table" class="table">
