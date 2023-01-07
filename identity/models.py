@@ -42,7 +42,7 @@ class Identity(models.Model):
         return self.user.first_name + " " + self.user.last_name
 
 class Certificate(models.Model):
-    identity = models.ForeignKey(Identity, on_delete=models.SET_NULL, null=True)
+    identity = models.OneToOneField(Identity, on_delete=models.SET_NULL, null=True)
     certificate_der = models.BinaryField(null=True)
 
     @classmethod
