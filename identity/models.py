@@ -1,4 +1,5 @@
 import base64
+import hashlib
 import uuid
 from datetime import datetime
 
@@ -62,6 +63,9 @@ class Certificate(models.Model):
         cert.set_pubkey(public_key)
         cert.sign(settings.CERTIFICATE_PRIVATE_KEY, 'sha512')
         cert = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
-        print(cert)
         certificate.certificate_der = cert
         return certificate
+
+    def hash(self):
+        print(hashlib.sha256(self.certificate_der).hexdigest())
+        return hashlib.sha256(self.certificate_der).hexdigest()

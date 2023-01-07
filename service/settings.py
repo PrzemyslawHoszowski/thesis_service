@@ -193,4 +193,4 @@ BLOCKCHAIN_CLI_ACCOUNT = env("BLOCKCHAIN_CLI_ACCOUNT")
 # PKI
 # noinspection PyTypeChecker
 CERTIFICATE = crypto.load_certificate(crypto.FILETYPE_PEM, open("priv/domain.crt", 'rt').read())
-CERTIFICATE_PRIVATE_KEY = crypto.load_privatekey(crypto.FILETYPE_PEM, open("priv/domain.key", 'rt').read())
+CERTIFICATE_PRIVATE_KEY = crypto.load_privatekey(crypto.FILETYPE_PEM, open("priv/domain.key", 'rt').read(), passphrase=lambda _: bytes(env("CERTIFICATE_PRIVATE_KEY_PASSWORD"), 'ascii'))

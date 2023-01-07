@@ -6,14 +6,14 @@ from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect
 
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic import FormView
 
 from identity.forms import SignupForm, RequestTokensForm
-from identity.models import Identity
+from identity.models import Identity, Certificate
 from identity.tokens import account_activation_token
 
 import os
@@ -93,3 +93,7 @@ class RequestTokensFormView(FormView):
             return render(request, self.template_name)
         else:
             return self.form_invalid(form)
+
+def certificate(request, identity_id):
+    cert = Certificate.objects.select_related("identity__user").get(identity__id=identity_id)
+    return FileResponse(cert.certificate_der, content_type="application/x-pem-file", filename=cert.identity.user.first_name + " " + cert.identity.user.last_name + ".pem")

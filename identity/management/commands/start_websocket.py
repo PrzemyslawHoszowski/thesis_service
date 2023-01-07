@@ -1,6 +1,7 @@
 import asyncio
 import base64
 import hashlib
+import os
 from datetime import datetime
 
 import requests
@@ -46,7 +47,11 @@ def handle_authorization(event, height, _tx_hash, _event_time):
         ident.blockchain_address = caller
         ident.user_verification_tx_height = height
         ident.save()
-        Certificate.create("Amr5gERyHZ9Mb3WW/7GUmR6NGSfGWaBRHoVKtxhAQzZV", ident).save()
+        cert = Certificate.create("Amr5gERyHZ9Mb3WW/7GUmR6NGSfGWaBRHoVKtxhAQzZV", ident)
+        cert.save()
+        print(f"{settings.BLOCKCHAIN_CLI} tx thesis add-certificate {cert.hash()} {ident.blockchain_address} --from {settings.BLOCKCHAIN_CLI_ACCOUNT} -y")
+        os.system(f"{settings.BLOCKCHAIN_CLI} tx thesis add-certificate {cert.hash()} {ident.blockchain_address} --from {settings.BLOCKCHAIN_CLI_ACCOUNT} -y")
+
     except Identity.DoesNotExist:
         logger.error(
             f"Authorization id doesn't match any identity. Identity: {ident}, height: {height}, caller: {caller}")
