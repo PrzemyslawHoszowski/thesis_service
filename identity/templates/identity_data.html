@@ -9,6 +9,7 @@
     {% endcompress %}
 {% endblock %}
 {% block content %}
+    <h3>Identity data</h3>
     <p>Id: <span id="user-id">{{ identity.id }}</span></p>
     <p>Username: {{ user.username }}</p>
     <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
@@ -16,6 +17,7 @@
     {% if identity.blockchain_address %}
         <p>Blockchain address: {{ identity.blockchain_address }}</p>
     {% else %}
-        <p>Blockchain address: <button id="blockchain-account-authorize">Link blockchain account</button></p>
+        <p>Before linking blockchain address to the account <a href="{% url "identity:tokens" %}"> get some tokens</a>.</p>
+        <p>Blockchain address: <button id="blockchain-account-authorize" class="btn btn-secondary">Link blockchain account</button></p>
     {% endif %}
 {% endblock %}

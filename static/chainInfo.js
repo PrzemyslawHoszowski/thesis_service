@@ -31,7 +31,7 @@ export const getTestnetChainInfo = () => ({
         coinDenom: "stake",
         coinMinimalDenom: "stake",
         coinDecimals: 0,
-        coinGeckoId: "cosmos",
+        coinGeckoId: "thesis",
         gasPriceStep: {
             low: 0.000005,
             average: 0.000005,
@@ -43,6 +43,6 @@ export const getTestnetChainInfo = () => ({
         coinDenom: "stake",
         coinMinimalDenom: "stake",
         coinDecimals: 0,
-        coinGeckoId: "cosmos",
+        coinGeckoId: "thesis",
     },
 })

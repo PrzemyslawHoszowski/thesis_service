@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
+from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
@@ -9,12 +10,17 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views.generic import FormView
 
-from identity.forms import SignupForm
+from identity.forms import SignupForm, RequestTokensForm
 from identity.models import Identity
 from identity.tokens import account_activation_token
 
+import os
 import logging
+
+from service import settings
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -58,7 +64,7 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return redirect('identity:index')
+        return redirect('identity:tokens')
     else:
         return HttpResponse('Activation link is invalid!')
 
@@ -70,3 +76,20 @@ def index(request):
         user_identity = Identity.create(request.user)
         user_identity.save()
     return render(request, 'identity_data.html', {'user': request.user, 'identity': user_identity})
+
+class RequestTokensFormView(FormView):
+    form_class = RequestTokensForm
+    template_name = 'tokens.html'
+
+    def get(self, request, *args, **kwargs):
+        form = RequestTokensForm(request.GET)
+        if form.is_valid():
+            address = form.cleaned_data["address"]
+            print("valid")
+            # this should be logged as in commercial use this option should be somehow limited
+            logger.error(f"Sending tokens to {address}")
+            os.system(f"{settings.BLOCKCHAIN_CLI} tx bank send {settings.BLOCKCHAIN_CLI_ACCOUNT} {address} 500stake -y")
+            messages.info(request, f"Sent tokens to {address}")
+            return render(request, self.template_name)
+        else:
+            return self.form_invalid(form)

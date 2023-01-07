@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %} Request tokens {% endblock %}
+{% load static %}
+{% load compress %}
+{% block additional_js %}
+    {% compress js %}
+        <script type="module" src="{% static "request_tokens.js" %}" ></script>
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+  <h3>Request tokens: 500 stake.</h3>
+  <form method="get">
+    {% csrf_token %}
+{#        {% if field.help_text %}#}
+{#          <small style="display: none">{{ field.help_text }}</small>#}
+{#        {% endif %}#}
+      <input name="address" id="blockchain-address" maxlength="45" value="" hidden>
+      <button type="submit" class="btn btn-primary" id="submit-blockchain-address" disabled>Send request</button>
+  </form>
+{% endblock %}

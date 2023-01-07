@@ -16,7 +16,7 @@ def index(request):
     docs = DocumentStorage.get_user_documents(request.user)
     is_address_assigned = not Identity.objects.get(user=request.user).blockchain_address is None
     if not is_address_assigned:
-        messages.error(f"Please assign your blockchain wallet to account. <a href=\"identity/\">Here</a>")
+        messages.error(request, f"Please assign your blockchain wallet to the account. <a href=\"identity/\">Here</a>")
     return render(request, 'doc_index.html', {'docs': docs, 'is_address_assigned': is_address_assigned})
 
 @login_required

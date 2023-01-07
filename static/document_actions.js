@@ -58,32 +58,36 @@ async function SendAddToRoleTx(element) {
         alert("You need to install Keplr")
         return
     }
-    const myRegistry = createRegistry()
-    const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
-    const signingClient = await SigningStargateClient.connectWithSigner(
-        getTestnetChainInfo().rpc,
-        offlineSigner,
-        {registry: myRegistry}
-    )
+    try {
+        const myRegistry = createRegistry()
+        const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
+        const signingClient = await SigningStargateClient.connectWithSigner(
+            getTestnetChainInfo().rpc,
+            offlineSigner,
+            {registry: myRegistry}
+        )
 
-    // Get the address and balance of your user
-    const account = (await offlineSigner.getAccounts())[0]
+        // Get the address and balance of your user
+        const account = (await offlineSigner.getAccounts())[0]
 
-    let sendMsg = {
-        typeUrl: MsgAddUsersUrl,
-        value: {
-            creator: account.address,
-            documentId: getDocumentId(),
-            role: name[0].toUpperCase() + name.substring(1) + "s",
-            addresses: getAddresses(input)
+        let sendMsg = {
+            typeUrl: MsgAddUsersUrl,
+            value: {
+                creator: account.address,
+                documentId: getDocumentId(),
+                role: name[0].toUpperCase() + name.substring(1) + "s",
+                addresses: getAddresses(input)
+            }
         }
-    }
 
-    let sendResult = await signingClient.signAndBroadcast(account.address, [sendMsg,], {
-        amount: [{denom: "stake", amount: "1"}],
-        gas: "200000",
-    },);
-    alert(sendResult.height)
+        let sendResult = await signingClient.signAndBroadcast(account.address, [sendMsg,], {
+            amount: [{denom: "stake", amount: "1"}],
+            gas: "200000",
+        },);
+        alert(sendResult.height)
+    } catch (error) {
+        alert(error)
+    }
 }
 
 function getDocumentId(){
@@ -95,10 +99,8 @@ function getAddresses(input){
 }
 
 function getAddressesToDelete(target){
-    let tmp = Array.from(target.parentElement.getElementsByClassName("to-delete"))
+    return Array.from(target.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("to-delete"))
             .map(tdEl => filterAddresses(tdEl.getElementsByTagName("span"))[0].innerHTML)
-
-    return tmp
 }
 
 function filterAddresses(htmlList){
@@ -124,38 +126,41 @@ function markToDelete(el){
 
 async function sendRemoveUserTx(element) {
     let name = element.target.name;
-    let input = document.getElementsByName(name + "-input");
     const {keplr} = window
     if (!keplr) {
         alert("You need to install Keplr")
         return
     }
-    const myRegistry = createRegistry()
-    const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
-    const signingClient = await SigningStargateClient.connectWithSigner(
-        getTestnetChainInfo().rpc,
-        offlineSigner,
-        {registry: myRegistry}
-    )
+    try {
+        const myRegistry = createRegistry()
+        const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
+        const signingClient = await SigningStargateClient.connectWithSigner(
+            getTestnetChainInfo().rpc,
+            offlineSigner,
+            {registry: myRegistry}
+        )
 
-    // Get the address and balance of your user
-    const account = (await offlineSigner.getAccounts())[0]
+        // Get the address and balance of your user
+        const account = (await offlineSigner.getAccounts())[0]
 
-    let sendMsg = {
-        typeUrl: MsgRemoveUsersUrl,
-        value: {
-            creator: account.address,
-            documentId: getDocumentId(),
-            role: name[0].toUpperCase() + name.substring(1) + "s",
-            addresses: getAddressesToDelete(element.target)
+        let sendMsg = {
+            typeUrl: MsgRemoveUsersUrl,
+            value: {
+                creator: account.address,
+                documentId: getDocumentId(),
+                role: name[0].toUpperCase() + name.substring(1) + "s",
+                addresses: getAddressesToDelete(element.target)
+            }
         }
-    }
 
-    let sendResult = await signingClient.signAndBroadcast(account.address, [sendMsg,], {
-        amount: [{denom: "stake", amount: "1"}],
-        gas: "200000",
-    },);
+        let sendResult = await signingClient.signAndBroadcast(account.address, [sendMsg,], {
+            amount: [{denom: "stake", amount: "1"}],
+            gas: "200000",
+        },);
     alert(sendResult.height)
+    } catch (error) {
+        alert(error)
+    }
 }
 
 async function sendSignDocumentTx() {
@@ -164,31 +169,35 @@ async function sendSignDocumentTx() {
         alert("You need to install Keplr")
         return
     }
-    const myRegistry = createRegistry()
-    const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
-    const signingClient = await SigningStargateClient.connectWithSigner(
-        getTestnetChainInfo().rpc,
-        offlineSigner,
-        {registry: myRegistry}
-    )
+    try {
+        const myRegistry = createRegistry()
+        const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
+        const signingClient = await SigningStargateClient.connectWithSigner(
+            getTestnetChainInfo().rpc,
+            offlineSigner,
+            {registry: myRegistry}
+        )
 
-    // Get the address and balance of your user
-    const account = (await offlineSigner.getAccounts())[0]
+        // Get the address and balance of your user
+        const account = (await offlineSigner.getAccounts())[0]
 
-    let sendMsg = {
-        typeUrl: MsgSignDocumentUrl,
-        value: {
-            creator: account.address,
-            documentId: getDocumentId(),
-            lastEditHeight: getLastEditHeight()
+        let sendMsg = {
+            typeUrl: MsgSignDocumentUrl,
+            value: {
+                creator: account.address,
+                documentId: getDocumentId(),
+                lastEditHeight: getLastEditHeight()
+            }
         }
-    }
 
-    let sendResult = await signingClient.signAndBroadcast(account.address, [sendMsg,], {
-        amount: [{denom: "stake", amount: "1"}],
-        gas: "200000",
-    },);
-    alert(sendResult.height)
+        let sendResult = await signingClient.signAndBroadcast(account.address, [sendMsg,], {
+            amount: [{denom: "stake", amount: "1"}],
+            gas: "200000",
+        },);
+        alert(sendResult.height)
+    } catch (error) {
+        alert(error)
+    }
 }
 
 async function sendRejectDocumentTx() {
@@ -197,28 +206,32 @@ async function sendRejectDocumentTx() {
         alert("You need to install Keplr")
         return
     }
-    const myRegistry = createRegistry()
-    const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
-    const signingClient = await SigningStargateClient.connectWithSigner(
-        getTestnetChainInfo().rpc,
-        offlineSigner,
-        {registry: myRegistry}
-    )
+    try {
+        const myRegistry = createRegistry()
+        const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
+        const signingClient = await SigningStargateClient.connectWithSigner(
+            getTestnetChainInfo().rpc,
+            offlineSigner,
+            {registry: myRegistry}
+        )
 
-    // Get the address and balance of your user
-    const account = (await offlineSigner.getAccounts())[0]
+        // Get the address and balance of your user
+        const account = (await offlineSigner.getAccounts())[0]
 
-    let sendMsg = {
-        typeUrl: MsgRejectSignatureUrl,
-        value: {
-            creator: account.address,
-            documentId: getDocumentId()
+        let sendMsg = {
+            typeUrl: MsgRejectSignatureUrl,
+            value: {
+                creator: account.address,
+                documentId: getDocumentId()
+            }
         }
-    }
 
-    let sendResult = await signingClient.signAndBroadcast(account.address, [sendMsg,], {
-        amount: [{denom: "stake", amount: "1"}],
-        gas: "200000",
-    },);
-    alert(sendResult.height)
+        let sendResult = await signingClient.signAndBroadcast(account.address, [sendMsg,], {
+            amount: [{denom: "stake", amount: "1"}],
+            gas: "200000",
+        },);
+        alert(sendResult.height)
+    } catch (error) {
+        alert(error)
+    }
 }

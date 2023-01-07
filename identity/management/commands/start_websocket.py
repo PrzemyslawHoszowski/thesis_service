@@ -15,7 +15,7 @@ from django.db import transaction
 from django.utils.timezone import make_aware
 
 from documents.models import Document, Event, DocumentStorage, MetadataThesisService
-from identity.models import Identity
+from identity.models import Identity, Certificate
 from service import settings
 logger = logging.getLogger(__name__)
 
@@ -46,6 +46,7 @@ def handle_authorization(event, height, _tx_hash, _event_time):
         ident.blockchain_address = caller
         ident.user_verification_tx_height = height
         ident.save()
+        Certificate.create("Amr5gERyHZ9Mb3WW/7GUmR6NGSfGWaBRHoVKtxhAQzZV", ident).save()
     except Identity.DoesNotExist:
         logger.error(
             f"Authorization id doesn't match any identity. Identity: {ident}, height: {height}, caller: {caller}")

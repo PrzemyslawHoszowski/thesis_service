@@ -1,8 +1,14 @@
+import base64
 import uuid
 from datetime import datetime
 
+from OpenSSL import crypto
+from cryptography.hazmat.primitives._serialization import Encoding, PublicFormat
 from django.contrib.auth.models import User
 from django.db import models
+from service import settings
+from cryptography.hazmat.primitives.asymmetric import ec
+
 
 class VerificationStatus(models.IntegerChoices):
     ADDRESS_VERIFICATION = 1, 'Blockchain address verification'
@@ -33,3 +39,29 @@ class Identity(models.Model):
 
     def name(self):
         return self.user.first_name + " " + self.user.last_name
+
+class Certificate(models.Model):
+    identity = models.ForeignKey(Identity, on_delete=models.SET_NULL, null=True)
+    certificate_der = models.BinaryField(null=True)
+
+    @classmethod
+    def create(cls, public_key: str, identity: Identity):
+        pk_bytes = base64.b64decode(public_key)
+        public_key = ec.EllipticCurvePublicKey.from_encoded_point(ec.SECP256K1(), pk_bytes)
+        public_key = public_key.public_bytes(encoding=Encoding.PEM, format=PublicFormat.SubjectPublicKeyInfo)
+        public_key = crypto.load_publickey(crypto.FILETYPE_PEM, public_key)
+        certificate = Certificate(identity=identity)
+        certificate.save()
+        cert = crypto.X509()
+        cert.get_subject().C = "PL"
+        cert.get_subject().CN = " ".join([identity.user.first_name, identity.user.last_name, identity.blockchain_address])
+        cert.set_serial_number(certificate.id)
+        cert.gmtime_adj_notBefore(0)
+        cert.gmtime_adj_notAfter(365 * 24 * 60 * 60) # year in seconds
+        cert.set_issuer(settings.CERTIFICATE.get_subject())
+        cert.set_pubkey(public_key)
+        cert.sign(settings.CERTIFICATE_PRIVATE_KEY, 'sha512')
+        cert = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
+        print(cert)
+        certificate.certificate_der = cert
+        return certificate

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 import environ
+from OpenSSL import crypto
 
 
 env = environ.Env()
@@ -181,7 +182,15 @@ EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = env("EMAIL_PORT")
 
-#Blockchain
+# Blockchain
 BLOCKCHAIN_HOST = env("BLOCKCHAIN_HOST", default="localhost")
 BLOCKCHAIN_PORT = env("BLOCKCHAIN_PORT", default="26657")
 BLOCKCHAIN_REST_PORT = env("BLOCKCHAIN_REST_PORT", default="1317")
+
+BLOCKCHAIN_CLI = env("BLOCKCHAIN_CLI")
+BLOCKCHAIN_CLI_ACCOUNT = env("BLOCKCHAIN_CLI_ACCOUNT")
+
+# PKI
+# noinspection PyTypeChecker
+CERTIFICATE = crypto.load_certificate(crypto.FILETYPE_PEM, open("priv/domain.crt", 'rt').read())
+CERTIFICATE_PRIVATE_KEY = crypto.load_privatekey(crypto.FILETYPE_PEM, open("priv/domain.key", 'rt').read())

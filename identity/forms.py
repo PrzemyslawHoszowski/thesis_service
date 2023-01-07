@@ -1,6 +1,8 @@
+import bech32
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
+from django.core.exceptions import ValidationError
 
 from identity.models import Identity
 
@@ -14,7 +16,9 @@ class SignupForm(UserCreationForm):
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
 
-# class IdentityForm(ModelForm):
-#     class Meta:
-#         model = Identity
-#         exclude = ['id', 'blockchain_address', 'user', 'verification_status', 'verification_token', ]
+
+def validate_bech32(value):
+    if bech32.bech32_decode(value) == (None, None):
+        raise ValidationError("Given value is not bech32 address with cosmos prefix")
+class RequestTokensForm(forms.Form):
+    address = forms.CharField(max_length=45, validators=[validate_bech32])

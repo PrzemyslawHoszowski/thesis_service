@@ -40,7 +40,7 @@
     </div>
     {% if can_sign %}
         <button class="remove-from-role btn btn-info btn-sm" id="sign-button">Sign</button>
-        <button class="add-to-role btn btn-danger btn-sm" id="reject-button">Reject</button>
+        <button class="add-to-role btn btn-danger btn-sm" id="reject-button" {% if doc.doc.state != "Signing" %}disabled{% endif %}>Reject version</button>
     {% endif %}
     <div id="roles">
         <table id="admins-table" class="table">
