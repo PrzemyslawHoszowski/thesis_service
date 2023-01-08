@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.MsgClientImpl = exports.MsgAuthorizeResponse = exports.MsgAuthorize = exports.MsgRejectSignatureResponse = exports.MsgRejectSignature = exports.MsgSignDocumentResponse = exports.MsgSignDocument = exports.MsgEditFilesResponse = exports.MsgEditFiles = exports.MsgRemoveUsersResponse = exports.MsgRemoveUsers = exports.MsgAddUsersResponse = exports.MsgAddUsers = exports.MsgCreateDocumentResponse = exports.MsgCreateDocument = exports.MsgAddCertificateResponse = exports.MsgAddCertificate = exports.protobufPackage = void 0;
 /* eslint-disable */
 // @ts-ignore
 var long_1 = require("long");
@@ -629,7 +628,7 @@ exports.MsgEditFilesResponse = {
     }
 };
 function createBaseMsgSignDocument() {
-    return { creator: "", documentId: "", files: [] };
+    return { creator: "", documentId: "", lastEditHeight: long_1["default"].UZERO };
 }
 exports.MsgSignDocument = {
     encode: function (message, writer) {
@@ -640,9 +639,8 @@ exports.MsgSignDocument = {
         if (message.documentId !== "") {
             writer.uint32(18).string(message.documentId);
         }
-        for (var _i = 0, _a = message.files; _i < _a.length; _i++) {
-            var v = _a[_i];
-            writer.uint32(26).string(v);
+        if (!message.lastEditHeight.isZero()) {
+            writer.uint32(24).uint64(message.lastEditHeight);
         }
         return writer;
     },
@@ -660,7 +658,7 @@ exports.MsgSignDocument = {
                     message.documentId = reader.string();
                     break;
                 case 3:
-                    message.files.push(reader.string());
+                    message.lastEditHeight = reader.uint64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -673,32 +671,32 @@ exports.MsgSignDocument = {
         return {
             creator: isSet(object.creator) ? String(object.creator) : "",
             documentId: isSet(object.documentId) ? String(object.documentId) : "",
-            files: Array.isArray(object === null || object === void 0 ? void 0 : object.files)
-                ? object.files.map(function (e) { return String(e); })
-                : []
+            lastEditHeight: isSet(object.lastEditHeight)
+                ? long_1["default"].fromValue(object.lastEditHeight)
+                : long_1["default"].UZERO
         };
     },
     toJSON: function (message) {
         var obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
         message.documentId !== undefined && (obj.documentId = message.documentId);
-        if (message.files) {
-            obj.files = message.files.map(function (e) { return e; });
-        }
-        else {
-            obj.files = [];
-        }
+        message.lastEditHeight !== undefined &&
+            (obj.lastEditHeight = (message.lastEditHeight || long_1["default"].UZERO).toString());
         return obj;
     },
     fromPartial: function (object) {
-        var _a, _b, _c;
+        var _a, _b;
         var message = createBaseMsgSignDocument();
         // @ts-ignore
         message.creator = (_a = object.creator) !== null && _a !== void 0 ? _a : "";
         // @ts-ignore
         message.documentId = (_b = object.documentId) !== null && _b !== void 0 ? _b : "";
-        // @ts-ignore
-        message.files = ((_c = object.files) === null || _c === void 0 ? void 0 : _c.map(function (e) { return e; })) || [];
+        message.lastEditHeight =
+            // @ts-ignore
+            object.lastEditHeight !== undefined && object.lastEditHeight !== null
+                // @ts-ignore
+                ? long_1["default"].fromValue(object.lastEditHeight)
+                : long_1["default"].UZERO;
         return message;
     }
 };
@@ -743,6 +741,122 @@ exports.MsgSignDocumentResponse = {
     },
     fromPartial: function (object) {
         var message = createBaseMsgSignDocumentResponse();
+        message.id =
+            // @ts-ignore
+            object.id !== undefined && object.id !== null
+                // @ts-ignore
+                ? long_1["default"].fromValue(object.id)
+                : long_1["default"].UZERO;
+        return message;
+    }
+};
+function createBaseMsgRejectDocument() {
+    return { creator: "", documentId: "", reason: "" };
+}
+exports.MsgRejectDocument = {
+    encode: function (message, writer) {
+        if (writer === void 0) { writer = minimal_1.Writer.create(); }
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.documentId !== "") {
+            writer.uint32(18).string(message.documentId);
+        }
+        if (message.reason !== "") {
+            writer.uint32(26).string(message.reason);
+        }
+        return writer;
+    },
+    decode: function (input, length) {
+        var reader = input instanceof minimal_1.Reader ? input : new minimal_1.Reader(input);
+        var end = length === undefined ? reader.len : reader.pos + length;
+        var message = createBaseMsgRejectDocument();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.documentId = reader.string();
+                    break;
+                case 3:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON: function (object) {
+        return {
+            creator: isSet(object.creator) ? String(object.creator) : "",
+            documentId: isSet(object.documentId) ? String(object.documentId) : "",
+            reason: isSet(object.reason) ? String(object.reason) : ""
+        };
+    },
+    toJSON: function (message) {
+        var obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.documentId !== undefined && (obj.documentId = message.documentId);
+        message.reason !== undefined && (obj.reason = message.reason);
+        return obj;
+    },
+    fromPartial: function (object) {
+        var _a, _b, _c;
+        var message = createBaseMsgRejectDocument();
+        // @ts-ignore
+        message.creator = (_a = object.creator) !== null && _a !== void 0 ? _a : "";
+        // @ts-ignore
+        message.documentId = (_b = object.documentId) !== null && _b !== void 0 ? _b : "";
+        // @ts-ignore
+        message.reason = (_c = object.reason) !== null && _c !== void 0 ? _c : "";
+        return message;
+    }
+};
+function createBaseMsgRejectDocumentResponse() {
+    return { id: long_1["default"].UZERO };
+}
+exports.MsgRejectDocumentResponse = {
+    encode: function (message, writer) {
+        if (writer === void 0) { writer = minimal_1.Writer.create(); }
+        if (!message.id.isZero()) {
+            writer.uint32(8).uint64(message.id);
+        }
+        return writer;
+    },
+    decode: function (input, length) {
+        var reader = input instanceof minimal_1.Reader ? input : new minimal_1.Reader(input);
+        var end = length === undefined ? reader.len : reader.pos + length;
+        var message = createBaseMsgRejectDocumentResponse();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.uint64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON: function (object) {
+        return {
+            id: isSet(object.id) ? long_1["default"].fromValue(object.id) : long_1["default"].UZERO
+        };
+    },
+    toJSON: function (message) {
+        var obj = {};
+        message.id !== undefined &&
+            (obj.id = (message.id || long_1["default"].UZERO).toString());
+        return obj;
+    },
+    fromPartial: function (object) {
+        var message = createBaseMsgRejectDocumentResponse();
         message.id =
             // @ts-ignore
             object.id !== undefined && object.id !== null
@@ -975,6 +1089,7 @@ var MsgClientImpl = /** @class */ (function () {
         this.SignDocument = this.SignDocument.bind(this);
         this.RejectSignature = this.RejectSignature.bind(this);
         this.Authorize = this.Authorize.bind(this);
+        this.RejectDocument = this.RejectDocument.bind(this);
     }
     MsgClientImpl.prototype.AddCertificate = function (request) {
         var data = exports.MsgAddCertificate.encode(request).finish();
@@ -1032,12 +1147,19 @@ var MsgClientImpl = /** @class */ (function () {
             return exports.MsgAuthorizeResponse.decode(new minimal_1.Reader(data));
         });
     };
+    MsgClientImpl.prototype.RejectDocument = function (request) {
+        var data = exports.MsgRejectDocument.encode(request).finish();
+        var promise = this.rpc.request("thesis.thesis.Msg", "RejectDocument", data);
+        return promise.then(function (data) {
+            return exports.MsgRejectDocumentResponse.decode(new minimal_1.Reader(data));
+        });
+    };
     return MsgClientImpl;
 }());
 exports.MsgClientImpl = MsgClientImpl;
 if (minimal_1.util.Long !== long_1["default"]) {
     minimal_1.util.Long = long_1["default"];
-    (0, minimal_1.configure)();
+    minimal_1.configure();
 }
 function isSet(value) {
     return value !== null && value !== undefined;

@@ -1,7 +1,16 @@
 import {getTestnetChainInfo} from "./chainInfo";
 import {Registry} from "@cosmjs/proto-signing";
 import {defaultRegistryTypes as defaultStargateTypes} from "@cosmjs/stargate/build/signingstargateclient";
-import {MsgAddUsers, MsgAuthorize, MsgCreateDocument, MsgSignDocument, MsgRemoveUsers, MsgRejectSignature, MsgEditFiles} from "./ts/tx";
+import {
+    MsgAddUsers,
+    MsgAuthorize,
+    MsgCreateDocument,
+    MsgSignDocument,
+    MsgRemoveUsers,
+    MsgRejectSignature,
+    MsgEditFiles,
+    MsgRejectDocument
+} from "./ts/tx";
 
 window.onload = async () => {
     if (!keplr) {
@@ -23,7 +32,8 @@ export function createRegistry() {
     myRegistry.register(MsgRemoveUsersUrl, MsgRemoveUsers);
     myRegistry.register(MsgEditFilesUrl, MsgEditFiles);
     myRegistry.register(MsgRejectSignatureUrl, MsgRejectSignature);
-    return myRegistry
+    myRegistry.register(MsgRejectDocumentUrl, MsgRejectDocument);
+    return myRegistry;
 }
 
 export const MsgAuthorizeUrl = "/thesis.thesis.MsgAuthorize"
@@ -34,3 +44,4 @@ export const MsgSignDocumentUrl = "/thesis.thesis.MsgSignDocument"
 export const MsgRemoveUsersUrl = "/thesis.thesis.MsgRemoveUsers"
 export const MsgEditFilesUrl = "/thesis.thesis.MsgEditFiles"
 export const MsgRejectSignatureUrl = "/thesis.thesis.MsgRejectSignature"
+export const MsgRejectDocumentUrl = "/thesis.thesis.MsgRejectDocument"

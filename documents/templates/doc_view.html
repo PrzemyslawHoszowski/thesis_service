@@ -39,8 +39,11 @@
         </table>
     </div>
     {% if can_sign %}
-        <button class="remove-from-role btn btn-info btn-sm" id="sign-button">Sign</button>
-        <button class="add-to-role btn btn-danger btn-sm" id="reject-button" {% if doc.doc.state != "Signing" %}disabled{% endif %}>Reject version</button>
+        <button class="btn btn-info btn-sm" id="sign-button">Sign</button>
+        <button class="btn btn-danger btn-sm" id="reject-button" {% if doc.doc.state != "Signing" %}disabled{% endif %}>Reject version</button>
+    {% endif %}
+    {% if doc.doc.state != "Signed" and can_add_user %}
+        <button class="btn btn-danger btn-sm" id="reject-document-button">Reject document</button>
     {% endif %}
     <div id="roles">
         <table id="admins-table" class="table">
@@ -63,7 +66,9 @@
                         <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
                     {% endif %}
                 {% endfor %}
-                <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="admin-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="admin">+</button></td></tr>
+                {% if can_add_user %}
+                    <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="admin-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="admin">+</button></td></tr>
+                {% endif %}
             </tbody>
         </table>
         <table id="editors-table" class="table">
@@ -76,12 +81,17 @@
             <tbody id="role-table-body-editor">
                 {% for person in roles.editors %}
                     {% if person.blockchain_address %}
-                        <tr><td class="existing-role">{{ person.name }} <span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                         <tr><td class="existing-role">
+                            <a href="{% url "identity:identity" document_index=doc.doc.index address=person.blockchain_address %}"> {{ person.name }} </a>
+                            <span name="blockchain-address">{{ person.blockchain_address }}</span>
+                        </td></tr>
                     {% else %}
                         <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
                     {% endif %}
               {% endfor %}
-                <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="editor-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="editor">+</button></td></tr>
+                {% if can_add_user %}
+                    <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="editor-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="editor">+</button></td></tr>
+                {% endif %}
             </tbody>
 
         </table>
@@ -95,12 +105,17 @@
             <tbody id="role-table-body-viewer">
                 {% for person in roles.viewers %}
                      {% if person.blockchain_address %}
-                        <tr><td class="existing-role">{{ person.name }} <span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                        <tr><td class="existing-role">
+                            <a href="{% url "identity:identity" document_index=doc.doc.index address=person.blockchain_address %}"> {{ person.name }} </a>
+                            <span name="blockchain-address">{{ person.blockchain_address }}</span>
+                        </td></tr>
                     {% else %}
                         <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
                     {% endif %}
                 {% endfor %}
-                <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="viewer-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="viewer">+</button></td></tr>
+                {% if can_add_user %}
+                    <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="viewer-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="viewer">+</button></td></tr>
+                {% endif %}
             </tbody>
         </table>
 
@@ -117,12 +132,15 @@
                 <tbody id="role-table-body-signer">
                     {% for person in roles.remaining_signers %}
                         {% if person.blockchain_address %}
-                            <tr><td class="existing-role">{{ person.name }} <span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                            <tr><td class="existing-role">
+                            <a href="{% url "identity:identity" document_index=doc.doc.index address=person.blockchain_address %}"> {{ person.name }} </a>
+                            <span name="blockchain-address">{{ person.blockchain_address }}</span>
+                        </td></tr>
                         {% else %}
                             <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
                         {% endif %}
                     {% endfor %}
-                    {% if doc.doc.state == 'Editing' %}
+                    {% if doc.doc.state == 'Editing' and can_add_user %}
                         <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="signer-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="signer">+</button></td></tr>
                     {% endif %}
                 </tbody>

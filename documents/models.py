@@ -86,6 +86,12 @@ class Document(models.Model):
     def users(self):
         return Identity.to_identity_list(self.entities())
 
+    def can_sign(self, user_address):
+        return user_address in self.signers and user_address not in self.signed and self.state != "Rejected"
+
+    def can_add_user(self, user_address):
+        return user_address in self.admins and self.state != "Rejected"
+
     def rejection_reason(self):
         # todo make some mapping to valid string for authorized users
         return self.rejectionReasonHash
@@ -95,6 +101,8 @@ class Document(models.Model):
         # returns list of files with attached value true/false if file is attached to current version of document
         return list(map(lambda file: (file, file.fileHashBase16 in self.files or file.fileHashBase16 in new_files), files_list))
 
+    def can_edit(self, identity_id):
+        return (identity_id in self.admins or identity_id in self.editors) and self.state != "Rejected"
 
 class Event(models.Model):
     attr = models.CharField(max_length=2000)

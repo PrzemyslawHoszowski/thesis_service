@@ -93,7 +93,8 @@ EVENTS_HANDLERS = {
     "document-signed": handle_document_update,
     "document-users-removed": handle_document_update,
     "document-files-changed": handle_document_update,
-    "document-signature-rejected": handle_document_update
+    "document-signature-rejected": handle_document_update,
+    "document-rejected": handle_document_update,
 }
 EVENTS = EVENTS_HANDLERS.keys()
 

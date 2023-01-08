@@ -46,10 +46,9 @@ def document_view(request, doc_index):
     roles =  document_storage.doc.translated_roles()
     user_address = user_identity.blockchain_address
 
-    can_sign = user_address in document_storage.doc.signers and \
-               user_address not in document_storage.doc.signed
-    can_add_user = user_address in document_storage.doc.admins
-    can_edit = user_address in document_storage.doc.admins or user_address in document_storage.doc.editors
+    can_sign = document_storage.doc.can_sign(user_address)
+    can_add_user = document_storage.doc.can_add_user(user_address)
+    can_edit = document_storage.doc.can_edit(user_address)
 
     events = Event.objects.filter(document=document_storage.doc).order_by("date")
     events = list(map(lambda event: event.attr_to_list(), events))
@@ -106,7 +105,7 @@ class FileFieldFormView(FormView):
         except:
             return HttpResponse('Unauthorized', status=401)
 
-        can_edit = user_address in doc.admins or user_address in doc.editors
+        can_edit = doc.can_edit(user_address)
         attached_files = StoredFile.objects.filter(doc=doc)
         context = {
             'form': form,
@@ -131,7 +130,7 @@ class FileFieldFormView(FormView):
             except:
                 return HttpResponse('Unauthorized', status=401)
 
-            can_edit = user_address in doc.admins or user_address in doc.editors
+            can_edit = doc.can_edit(user_address)
             new_files = []
             if can_edit:
                 with transaction.atomic():

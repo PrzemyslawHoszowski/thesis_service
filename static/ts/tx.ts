@@ -66,6 +66,17 @@ export interface MsgSignDocumentResponse {
   id: Long;
 }
 
+export interface MsgRejectDocument {
+  creator: string;
+  documentId: string;
+  reason: string;
+}
+
+export interface MsgRejectDocumentResponse {
+  id: Long;
+}
+
+
 export interface MsgRejectSignature {
   creator: string;
   documentId: string;
@@ -951,6 +962,146 @@ export const MsgSignDocumentResponse = {
   },
 };
 
+
+function createBaseMsgRejectDocument(): MsgRejectDocument {
+  return { creator: "", documentId: "", reason: "" };
+}
+
+export const MsgRejectDocument = {
+  encode(
+    message: MsgRejectDocument,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.documentId !== "") {
+      writer.uint32(18).string(message.documentId);
+    }
+    if (message.reason !== "") {
+      writer.uint32(26).string(message.reason);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgRejectDocument {
+    const reader = input instanceof Reader ? input : new Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgRejectDocument();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.documentId = reader.string();
+          break;
+        case 3:
+          message.reason = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgRejectDocument {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      documentId: isSet(object.documentId) ? String(object.documentId) : "",
+      reason: isSet(object.reason) ? String(object.reason) : "",
+    };
+  },
+
+  toJSON(message: MsgRejectDocument): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.documentId !== undefined && (obj.documentId = message.documentId);
+    message.reason !== undefined && (obj.reason = message.reason);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgRejectDocument>, I>>(
+    object: I
+  ): MsgRejectDocument {
+    const message = createBaseMsgRejectDocument();
+     // @ts-ignore
+    message.creator = object.creator ?? "";
+     // @ts-ignore
+    message.documentId = object.documentId ?? "";
+     // @ts-ignore
+    message.reason = object.reason ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgRejectDocumentResponse(): MsgRejectDocumentResponse {
+  return { id: Long.UZERO };
+}
+
+export const MsgRejectDocumentResponse = {
+  encode(
+    message: MsgRejectDocumentResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (!message.id.isZero()) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgRejectDocumentResponse {
+    const reader = input instanceof Reader ? input : new Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgRejectDocumentResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = reader.uint64() as Long;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgRejectDocumentResponse {
+    return {
+      id: isSet(object.id) ? Long.fromValue(object.id) : Long.UZERO,
+    };
+  },
+
+  toJSON(message: MsgRejectDocumentResponse): unknown {
+    const obj: any = {};
+    message.id !== undefined &&
+      (obj.id = (message.id || Long.UZERO).toString());
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgRejectDocumentResponse>, I>>(
+    object: I
+  ): MsgRejectDocumentResponse {
+    const message = createBaseMsgRejectDocumentResponse();
+    message.id =
+         // @ts-ignore
+      object.id !== undefined && object.id !== null
+           // @ts-ignore
+        ? Long.fromValue(object.id)
+        : Long.UZERO;
+    return message;
+  },
+};
+
+
 function createBaseMsgRejectSignature(): MsgRejectSignature {
   return { creator: "", documentId: "" };
 }
@@ -1222,8 +1373,11 @@ export interface Msg {
   RejectSignature(
     request: MsgRejectSignature
   ): Promise<MsgRejectSignatureResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   Authorize(request: MsgAuthorize): Promise<MsgAuthorizeResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  RejectDocument(
+    request: MsgRejectDocument
+  ): Promise<MsgRejectDocumentResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -1238,6 +1392,7 @@ export class MsgClientImpl implements Msg {
     this.SignDocument = this.SignDocument.bind(this);
     this.RejectSignature = this.RejectSignature.bind(this);
     this.Authorize = this.Authorize.bind(this);
+    this.RejectDocument = this.RejectDocument.bind(this);
   }
   AddCertificate(
     request: MsgAddCertificate
@@ -1318,6 +1473,19 @@ export class MsgClientImpl implements Msg {
     const promise = this.rpc.request("thesis.thesis.Msg", "Authorize", data);
     return promise.then((data) =>
       MsgAuthorizeResponse.decode(new Reader(data))
+    );
+  }
+  RejectDocument(
+    request: MsgRejectDocument
+  ): Promise<MsgRejectDocumentResponse> {
+    const data = MsgRejectDocument.encode(request).finish();
+    const promise = this.rpc.request(
+      "thesis.thesis.Msg",
+      "RejectDocument",
+      data
+    );
+    return promise.then((data) =>
+      MsgRejectDocumentResponse.decode(new Reader(data))
     );
   }
 }

@@ -1,4 +1,11 @@
-import {createRegistry, MsgAddUsersUrl, MsgRejectSignatureUrl, MsgRemoveUsersUrl, MsgSignDocumentUrl} from "./basic";
+import {
+    createRegistry,
+    MsgAddUsersUrl,
+    MsgRejectDocumentUrl,
+    MsgRejectSignatureUrl,
+    MsgRemoveUsersUrl,
+    MsgSignDocumentUrl
+} from "./basic";
 import {getTestnetChainInfo} from "./chainInfo";
 import {SigningStargateClient} from "@cosmjs/stargate";
 import {fromBech32} from "@cosmjs/encoding";
@@ -25,6 +32,10 @@ window.onload = async () => {
             removeUsersButtons[i].addEventListener('click', sendRemoveUserTx, false)
         }
 
+        let rejectDocumentButton = document.getElementById("reject-document-button")
+        if(rejectDocumentButton){
+            rejectDocumentButton.addEventListener("click", sendRejectDocumentTx, false)
+        }
     }
     let signButton = document.getElementById("sign-button")
     if (signButton){
@@ -32,7 +43,7 @@ window.onload = async () => {
     }
     let rejectButton = document.getElementById("reject-button")
     if (rejectButton){
-        rejectButton.addEventListener('click', sendRejectDocumentTx, false);
+        rejectButton.addEventListener('click', sendRejectSignatureTx, false);
     }
 }
 
@@ -200,7 +211,7 @@ async function sendSignDocumentTx() {
     }
 }
 
-async function sendRejectDocumentTx() {
+async function sendRejectSignatureTx() {
     const {keplr} = window
     if (!keplr) {
         alert("You need to install Keplr")
@@ -223,6 +234,44 @@ async function sendRejectDocumentTx() {
             value: {
                 creator: account.address,
                 documentId: getDocumentId()
+            }
+        }
+
+        let sendResult = await signingClient.signAndBroadcast(account.address, [sendMsg,], {
+            amount: [{denom: "stake", amount: "1"}],
+            gas: "200000",
+        },);
+        alert(sendResult.height)
+    } catch (error) {
+        alert(error)
+    }
+}
+
+
+async function sendRejectDocumentTx() {
+    const {keplr} = window
+    if (!keplr) {
+        alert("You need to install Keplr")
+        return
+    }
+    try {
+        const myRegistry = createRegistry()
+        const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
+        const signingClient = await SigningStargateClient.connectWithSigner(
+            getTestnetChainInfo().rpc,
+            offlineSigner,
+            {registry: myRegistry}
+        )
+
+        // Get the address and balance of your user
+        const account = (await offlineSigner.getAccounts())[0]
+
+        let sendMsg = {
+            typeUrl: MsgRejectDocumentUrl,
+            value: {
+                creator: account.address,
+                documentId: getDocumentId(),
+                reason: ""
             }
         }
 
