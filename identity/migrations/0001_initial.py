@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             name='Certificate',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('certificate_der', models.BinaryField(null=True)),
+                ('certificate_pem', models.BinaryField(null=True)),
                 ('identity', models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, to='identity.identity')),
             ],
         ),

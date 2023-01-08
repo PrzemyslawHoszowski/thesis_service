@@ -43,7 +43,7 @@ class Identity(models.Model):
 
 class Certificate(models.Model):
     identity = models.OneToOneField(Identity, on_delete=models.SET_NULL, null=True)
-    certificate_der = models.BinaryField(null=True)
+    certificate_pem = models.BinaryField(null=True)
 
     @classmethod
     def create(cls, public_key: str, identity: Identity):
@@ -63,9 +63,8 @@ class Certificate(models.Model):
         cert.set_pubkey(public_key)
         cert.sign(settings.CERTIFICATE_PRIVATE_KEY, 'sha512')
         cert = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
-        certificate.certificate_der = cert
+        certificate.certificate_pem = cert
         return certificate
 
     def hash(self):
-        print(hashlib.sha256(self.certificate_der).hexdigest())
-        return hashlib.sha256(self.certificate_der).hexdigest()
+        return hashlib.sha256(self.certificate_pem).hexdigest()

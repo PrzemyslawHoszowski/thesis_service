@@ -101,7 +101,7 @@ class RequestTokensFormView(FormView):
 def certificate(request):
     caller_identity = Identity.objects.get(user=request.user)
     cert = Certificate.objects.select_related("identity__user").get(identity__id=caller_identity.id)
-    return FileResponse(cert.certificate_der, content_type="application/x-pem-file", filename=cert.identity.user.first_name + " " + cert.identity.user.last_name + ".pem")
+    return FileResponse(cert.certificate_pem, content_type="application/x-pem-file", filename=cert.identity.user.first_name + " " + cert.identity.user.last_name + ".pem")
 
 @login_required
 def document_user_certificate(request, document_index, address):
@@ -110,7 +110,7 @@ def document_user_certificate(request, document_index, address):
                                                  doc__index=document_index).count()
     if doc_storage == 2 or user_identity.user == request.user:
         cert = Certificate.objects.select_related("identity__user").get(identity__id=user_identity.id)
-        return FileResponse(cert.certificate_der, content_type="application/x-pem-file",
+        return FileResponse(cert.certificate_pem, content_type="application/x-pem-file",
                             filename=cert.identity.user.first_name + " " + cert.identity.user.last_name + ".pem")
     messages.error(request, "You are unauthorized to see this identity or it doesn't exist.")
     return redirect('documents:doc', document_index)
