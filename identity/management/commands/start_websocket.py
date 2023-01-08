@@ -63,7 +63,7 @@ def handle_document_created(event, _height, tx_hash, event_time):
     index = event['attributes']['document-id']
     document = get_document(index)
     document = Document.create(document, event_time)
-    event = Event.create(json.dumps(event['attributes']), event_time, tx_hash, document)
+    event = Event.create(json.dumps(event['attributes']), event_time, event["type"], tx_hash, document)
     with transaction.atomic():
         document.save()
         event.save()
@@ -75,7 +75,7 @@ def handle_document_update(event, _height, tx_hash, event_time):
     document_json = get_document(index)
     document_object = Document.objects.filter(pk=index).get()
     document_object.update(document_json, event_time)
-    event_obj = Event.create(json.dumps(event['attributes']), event_time, tx_hash, document_object)
+    event_obj = Event.create(json.dumps(event['attributes']), event_time, event['type'], tx_hash, document_object)
     with transaction.atomic():
         document_object.save()
         event_obj.save()
@@ -145,7 +145,6 @@ def get_transactions(block):
 
 def get_transaction_result(tx_hash):
     response = requests.get(TENDERMINT_URL + f"/tx?hash=0x{tx_hash}")
-    print(response.json())
     return response.json()["result"]
 
 async def subscribe(websocket):

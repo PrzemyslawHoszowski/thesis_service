@@ -15,7 +15,10 @@ from identity.models import Identity
 @login_required
 def index(request):
     docs = DocumentStorage.get_user_documents(request.user)
-    is_address_assigned = not Identity.objects.get(user=request.user).blockchain_address is None
+    try:
+        is_address_assigned = not Identity.objects.get(user=request.user).blockchain_address is None
+    except Identity.DoesNotExist:
+        is_address_assigned = False
     if not is_address_assigned:
         messages.error(request, f"Please assign your blockchain wallet to the account. <a href=\"identity/\">Here</a>")
     return render(request, 'doc_index.html', {'docs': docs, 'is_address_assigned': is_address_assigned})

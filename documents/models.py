@@ -107,11 +107,12 @@ class Document(models.Model):
 class Event(models.Model):
     attr = models.CharField(max_length=2000)
     date = models.DateTimeField()
+    title = models.CharField(max_length=64)
     txHash = models.CharField(max_length=64)
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
     @classmethod
-    def create(cls, attr, date, tx_hash, document):
-        return cls(attr=attr, date=date, txHash=tx_hash, document=document)
+    def create(cls, attr, date, title, tx_hash, document):
+        return cls(attr=attr, date=date, title=title, txHash=tx_hash, document=document)
 
     def attr_to_list(self):
         self.attr = json.loads(self.attr).items()

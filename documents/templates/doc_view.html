@@ -170,6 +170,7 @@
         <h3>Events</h3>
         {% for event in events %}
             <div class="event-div border border-2">
+                <h5>{{ event.title }}</h5>
                 <span class="key">Transaction hash</span>: <span class="value"> 0x{{ event.txHash }}</span>
                 <br><span class="key">Block date</span>: <span class="value"> {{ event.date }}</span>
                 {% for attr in event.attr %}
