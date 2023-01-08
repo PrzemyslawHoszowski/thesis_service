@@ -13,6 +13,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic import FormView
 
+from documents.models import DocumentStorage
 from identity.forms import SignupForm, RequestTokensForm
 from identity.models import Identity, Certificate
 from identity.tokens import account_activation_token
@@ -96,6 +97,29 @@ class RequestTokensFormView(FormView):
         else:
             return self.form_invalid(form)
 
-def certificate(request, identity_id):
-    cert = Certificate.objects.select_related("identity__user").get(identity__id=identity_id)
+@login_required
+def certificate(request):
+    caller_identity = Identity.objects.get(user=request.user)
+    cert = Certificate.objects.select_related("identity__user").get(identity__id=caller_identity.id)
     return FileResponse(cert.certificate_der, content_type="application/x-pem-file", filename=cert.identity.user.first_name + " " + cert.identity.user.last_name + ".pem")
+
+@login_required
+def document_user_certificate(request, document_index, address):
+    user_identity = Identity.objects.select_related("user").get(blockchain_address=address)
+    doc_storage = DocumentStorage.objects.filter(user__in=[request.user, user_identity.user],
+                                                 doc__index=document_index).count()
+    if doc_storage == 2 or user_identity.user == request.user:
+        cert = Certificate.objects.select_related("identity__user").get(identity__id=user_identity.id)
+        return FileResponse(cert.certificate_der, content_type="application/x-pem-file",
+                            filename=cert.identity.user.first_name + " " + cert.identity.user.last_name + ".pem")
+    messages.error(request, "You are unauthorized to see this identity or it doesn't exist.")
+    return redirect('documents:doc', document_index)
+
+@login_required
+def document_identity(request, document_index, address):
+    user_identity = Identity.objects.select_related("user").get(blockchain_address=address)
+    doc_storage = DocumentStorage.objects.filter(user__in=[request.user, user_identity.user], doc__index=document_index).count()
+    if doc_storage == 2 or user_identity.user == request.user:
+        return render(request, "other_user_identity.html", {'identity': user_identity, 'document_index': document_index})
+    messages.error(request, "You are unauthorized to see this identity or it doesn't exist.")
+    return redirect('documents:doc', document_index)

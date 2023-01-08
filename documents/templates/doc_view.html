@@ -55,7 +55,10 @@
             <tbody id="role-table-body-admin">
                 {% for person in roles.admins %}
                     {% if person.blockchain_address %}
-                        <tr><td class="existing-role">{{ person.name }} <span name="blockchain-address">{{ person.blockchain_address }}</span></td></tr>
+                        <tr><td class="existing-role">
+                            <a href="{% url "identity:identity" document_index=doc.doc.index address=person.blockchain_address %}"> {{ person.name }} </a>
+                            <span name="blockchain-address">{{ person.blockchain_address }}</span>
+                        </td></tr>
                     {% else %}
                         <tr><td class="existing-role"><span name="blockchain-address">{{ person }}</span></td></tr>
                     {% endif %}

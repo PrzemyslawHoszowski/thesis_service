@@ -11,12 +11,11 @@
 {% block content %}
     <h3>Identity data</h3>
     <p>Id: <span id="user-id">{{ identity.id }}</span></p>
-    <p>Username: {{ user.username }}</p>
-    <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
-    <p>Mail: {{ user.email }}</p>
+    <p>Name: {{ identity.user.first_name }} {{ identity.user.last_name }}</p>
+    <p>Mail: {{ identity.user.email }}</p>
     {% if identity.blockchain_address %}
         <p>Blockchain address: {{ identity.blockchain_address }}</p>
-        <p><a href="{% url "identity:certificate" %}" download>Certificate</a></p>
+        <p><a href="{% url "identity:identity_certificate" document_index identity.blockchain_address %}" download>Certificate</a></p>
     {% else%}
         <p>Before linking blockchain address to the account <a href="{% url "identity:tokens" %}"> get some tokens</a>.</p>
         <p>Blockchain address: <button id="blockchain-account-authorize" class="btn btn-secondary">Link blockchain account</button></p>
