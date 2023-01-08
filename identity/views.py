@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.core.mail import EmailMessage
 from django.contrib import messages
 from django.contrib.auth import login
@@ -8,7 +9,7 @@ from django.shortcuts import render, redirect
 
 from django.http import HttpResponse, FileResponse
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_str
+from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic import FormView
 
@@ -82,10 +83,11 @@ class RequestTokensFormView(FormView):
     template_name = 'tokens.html'
 
     def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect_to_login(request.get_full_path())
         form = RequestTokensForm(request.GET)
         if form.is_valid():
             address = form.cleaned_data["address"]
-            print("valid")
             # this should be logged as in commercial use this option should be somehow limited
             logger.error(f"Sending tokens to {address}")
             os.system(f"{settings.BLOCKCHAIN_CLI} tx bank send {settings.BLOCKCHAIN_CLI_ACCOUNT} {address} 500stake -y")

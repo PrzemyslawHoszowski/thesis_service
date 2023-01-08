@@ -1,8 +1,9 @@
-export const getTestnetChainInfo = () => ({
+export const getTestnetChainInfo = () => {
+    return {
     chainId: "thesis",
     chainName: "Thesis",
-    rpc: "http://127.0.0.1:26657",
-    rest: "http://127.0.0.1:1317",
+    rpc: "http://" + location.hostname + ":26657",
+    rest: "http://" + location.hostname + ":1317",
     bip44: {
         coinType: 118,
     },
@@ -45,4 +46,4 @@ export const getTestnetChainInfo = () => ({
         coinDecimals: 0,
         coinGeckoId: "thesis",
     },
-})
+}}

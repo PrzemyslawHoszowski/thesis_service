@@ -6,6 +6,11 @@ window.onload = async () => {
         alert("You need to install Keplr")
         return
     }
+
+    await window.keplr.experimentalSuggestChain(getTestnetChainInfo())
+    const chainId = "thesis";
+    await keplr.enable(chainId);
+
     const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
     const account = (await offlineSigner.getAccounts())[0]
 
