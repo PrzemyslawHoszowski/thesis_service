@@ -68,7 +68,13 @@ class Document(models.Model):
 
     def get_identities_mapping(self):
         if not hasattr(self, 'identities_mapping'):
-            self.identities_mapping = dict(map(lambda x: (x.blockchain_address, x), self.users()))
+            users = self.users()
+            user_to_address = dict(map(lambda user: (user.user, user.blockchain_address), users))
+            self.identities_mapping = dict(map(lambda x: (x.blockchain_address, x), users))
+            for doc_storage in DocumentStorage.objects.filter(accepted=False, doc__index=self.index):
+                address = user_to_address[doc_storage.user]
+                if address in self.identities_mapping:
+                    self.identities_mapping[address] = address
         return self.identities_mapping
 
     def if_signed(self, user: Identity):
@@ -141,16 +147,17 @@ class DocumentStorage(models.Model):
     doc = models.ForeignKey(Document, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     hidden = models.BooleanField(default=False)
+    accepted = models.BooleanField(default=False)
 
     @classmethod
-    def create_records(cls, document, identities):
+    def create_records(cls, document, identities, accepted=False):
         document_users = set(map(lambda x: x.user, DocumentStorage.objects.filter(doc=document)))
         users = set(map(lambda x: x.user, identities))
         to_delete = document_users - users
         to_append = users - document_users
 
         for user in to_append:
-            DocumentStorage(doc=document, user=user).save()
+            DocumentStorage(doc=document, user=user, accepted=accepted).save()
         DocumentStorage.objects.filter(doc=document, user__in=to_delete).delete()
 
     @classmethod

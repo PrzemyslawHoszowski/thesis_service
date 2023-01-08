@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.http import HttpResponse, FileResponse
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.views.generic.edit import FormView
 from django.shortcuts import get_object_or_404
 
@@ -23,6 +24,8 @@ def index(request):
 def document_view(request, doc_index):
     try:
         document_storage = DocumentStorage.objects.filter(user=request.user, doc__index=doc_index).get()
+        if not document_storage.accepted:
+            accept_document_message(request, doc_index)
     except DocumentStorage.DoesNotExist:
         messages.error(request, "Unauthorized")
         return redirect("documents:index")
@@ -149,4 +152,22 @@ class FileFieldFormView(FormView):
         else:
             return self.form_invalid(form)
 
+def accept_document_message(request, doc_index):
+    messages.info(request, render_to_string('accept_document.html', {'doc_index': doc_index}, request=request))
 
+@login_required
+def action(request, doc_index):
+    user_action = request.GET["action"]
+    doc_storage = DocumentStorage.objects.get(user=request.user, doc__index=doc_index)
+    if user_action == "Accept":
+        doc_storage.accepted = True
+        doc_storage.save()
+        messages.info(request, "Document has been accepted")
+        return redirect("documents:doc", doc_index)
+    elif user_action == "Hide":
+        doc_storage.hidden = True
+        doc_storage.save()
+        messages.info(request, "Document has been hidden")
+        return redirect("documents:index")
+    messages.error(request, "Got invalid query")
+    return redirect('documents:index')

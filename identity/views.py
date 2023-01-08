@@ -107,7 +107,7 @@ def certificate(request):
 def document_user_certificate(request, document_index, address):
     user_identity = Identity.objects.select_related("user").get(blockchain_address=address)
     doc_storage = DocumentStorage.objects.filter(user__in=[request.user, user_identity.user],
-                                                 doc__index=document_index).count()
+                                                 doc__index=document_index, accepted=True).count()
     if doc_storage == 2 or user_identity.user == request.user:
         cert = Certificate.objects.select_related("identity__user").get(identity__id=user_identity.id)
         return FileResponse(cert.certificate_pem, content_type="application/x-pem-file",
@@ -118,7 +118,8 @@ def document_user_certificate(request, document_index, address):
 @login_required
 def document_identity(request, document_index, address):
     user_identity = Identity.objects.select_related("user").get(blockchain_address=address)
-    doc_storage = DocumentStorage.objects.filter(user__in=[request.user, user_identity.user], doc__index=document_index).count()
+    doc_storage = DocumentStorage.objects.filter(user__in=[request.user, user_identity.user],
+                                                 doc__index=document_index, accepted=True).count()
     if doc_storage == 2 or user_identity.user == request.user:
         return render(request, "other_user_identity.html", {'identity': user_identity, 'document_index': document_index})
     messages.error(request, "You are unauthorized to see this identity or it doesn't exist.")
