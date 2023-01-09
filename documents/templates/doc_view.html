@@ -15,7 +15,7 @@
 {% block content %}
     <form method="POST"><div class="input-group mb-3">
         {% csrf_token %}
-        <input class="form-control doc-name-input" name="new-name" maxlength="45" value="{{ doc.name }}">
+        <input class="form-control doc-name-input" name="new-name" maxlength="50" value="{{ doc.name }}">
         <input type="submit" hidden>
     </div></form>
     {% if can_add_user %}
@@ -67,7 +67,7 @@
                     {% endif %}
                 {% endfor %}
                 {% if can_add_user %}
-                    <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="admin-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="admin">+</button></td></tr>
+                    <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="admin-input" maxlength="50" placeholder="blockchain address of invited person ex. cosmos17ae3syeplrs2v4s02rdafz7w2jpfg0kmqvvcqp"><button class="expand-role btn btn-outline-secondary" name="admin">+</button></td></tr>
                 {% endif %}
             </tbody>
         </table>
@@ -90,7 +90,7 @@
                     {% endif %}
               {% endfor %}
                 {% if can_add_user %}
-                    <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="editor-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="editor">+</button></td></tr>
+                    <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="editor-input" maxlength="50" placeholder="blockchain address of invited person ex. cosmos17ae3syeplrs2v4s02rdafz7w2jpfg0kmqvvcqp"><button class="expand-role btn btn-outline-secondary" name="editor">+</button></td></tr>
                 {% endif %}
             </tbody>
 
@@ -114,7 +114,7 @@
                     {% endif %}
                 {% endfor %}
                 {% if can_add_user %}
-                    <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="viewer-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="viewer">+</button></td></tr>
+                    <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="viewer-input" maxlength="50" placeholder="blockchain address of invited person ex. cosmos17ae3syeplrs2v4s02rdafz7w2jpfg0kmqvvcqp"><button class="expand-role btn btn-outline-secondary" name="viewer">+</button></td></tr>
                 {% endif %}
             </tbody>
         </table>
@@ -141,7 +141,7 @@
                         {% endif %}
                     {% endfor %}
                     {% if doc.doc.state == 'Editing' and can_add_user %}
-                        <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="signer-input" maxlength="45"><button class="expand-role btn btn-outline-secondary" name="signer">+</button></td></tr>
+                        <tr class="new-role"><td class="input-group mb-3"><input class="address-input form-control" name="signer-input" maxlength="50" placeholder="blockchain address of invited person ex. cosmos17ae3syeplrs2v4s02rdafz7w2jpfg0kmqvvcqp"><button class="expand-role btn btn-outline-secondary" name="signer">+</button></td></tr>
                     {% endif %}
                 </tbody>
             </table>

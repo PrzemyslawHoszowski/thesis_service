@@ -36,6 +36,11 @@ window.onload = async () => {
         if(rejectDocumentButton){
             rejectDocumentButton.addEventListener("click", sendRejectDocumentTx, false)
         }
+
+        let addressInputs = document.getElementsByClassName("address-input")
+        for (let i = 0; i< addressInputs.length; i++){
+            addressInputs[i].addEventListener("change", validateAddressInput, false);
+        }
     }
     let signButton = document.getElementById("sign-button")
     if (signButton){
@@ -50,7 +55,7 @@ window.onload = async () => {
 function createInputField(roleName){
     let newRow = document.createElement("tr")
     newRow.setAttribute("class", "new-role")
-    newRow.innerHTML = "<tr class=\"new-role\"><td class=\"input-group mb-3\"><input class=\"address-input form-control\" name=\"" + roleName + "-input\" maxlength=\"45\"><button class=\"expand-role btn btn-outline-secondary\" name=\"" + roleName + "\">+</button></td></tr>"
+    newRow.innerHTML = "<tr class=\"new-role\"><td class=\"input-group mb-3\"><input class=\"address-input form-control\" name=\"" + roleName + "-input\" maxlength=\"50\"><button class=\"expand-role btn btn-outline-secondary\" name=\"" + roleName + "\">+</button></td></tr>"
     newRow.getElementsByClassName("expand-role")[0].addEventListener('click', expandRoles)
     return newRow
 }
@@ -106,7 +111,7 @@ function getDocumentId(){
 }
 
 function getAddresses(input){
-    return Array.from(input).map(htmlElement => htmlElement.value).filter(address => address.length == 45).map(validateAddress)
+    return Array.from(input).map(htmlElement => htmlElement.value).filter(address => address.length >= 10).map(validateAddress)
 }
 
 function getAddressesToDelete(target){
@@ -119,8 +124,21 @@ function filterAddresses(htmlList){
 }
 
 function validateAddress(address){
+
+    address = address.trim()
     fromBech32(address)
     return address
+}
+
+function validateAddressInput(e){
+    try{
+        if(e.target.value.trim() != "") {
+            validateAddress(e.target.value)
+        }
+        e.target.classList.remove("is-invalid")
+    } catch(ex) {
+        e.target.classList.add("is-invalid")
+    }
 }
 
 function getLastEditHeight(){

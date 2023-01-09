@@ -16,8 +16,8 @@
 {#        {% if field.help_text %}#}
 {#          <small style="display: none">{{ field.help_text }}</small>#}
 {#        {% endif %}#}
-      <p>Before sending request please set up your <a href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap"> Keplr extension</a></p>
-      <input name="address" id="blockchain-address" maxlength="45" value="" hidden>
+      <p>Before sending request please set up your <a href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap"> Keplr extension</a> and create a Keplr account.</p>
+      <input name="address" id="blockchain-address" maxlength="50" value="" hidden>
       <button type="submit" class="btn btn-primary" id="submit-blockchain-address" disabled>Send request</button>
   </form>
 {% endblock %}
