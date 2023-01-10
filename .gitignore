@@ -3,3 +3,4 @@ static/CACHE
 py_env
 static_collected/
 media/
+nohup.out

@@ -19,6 +19,6 @@
         <p><a href="{% url "identity:certificate" %}" download>Certificate</a></p>
     {% else%}
         <p>Before linking blockchain address to the account <a href="{% url "identity:tokens" %}"> get some tokens</a>.</p>
-        <p>Blockchain address: <button id="blockchain-account-authorize" class="btn btn-secondary">Link blockchain account</button></p>
+        <p>Blockchain address: <button id="blockchain-account-authorize" class="btn btn-primary">Link blockchain account</button></p>
     {% endif %}
 {% endblock %}
