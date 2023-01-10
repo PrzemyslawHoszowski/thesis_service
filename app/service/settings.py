@@ -87,11 +87,11 @@ WSGI_APPLICATION = 'service.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD': env("DB_PASSWORD"),
-        'HOST': env("DB_HOST"),
-        'PORT': env("DB_PORT"),
+        'NAME': env("DB_NAME", default="thesis"),
+        'USER': env("DB_USER", default="thesis"),
+        'PASSWORD': env("DB_PASSWORD", default="thesis"),
+        'HOST': env("DB_HOST", default="localhost"),
+        'PORT': env("DB_PORT", default="5433"),
     }
 }
 
@@ -132,7 +132,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_ROOT = 'static_collected'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_URL = '/static/'
 MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
@@ -178,18 +178,18 @@ LOGOUT_REDIRECT_URL = "/"
 
 # Email client
 EMAIL_USE_TLS = True
-EMAIL_HOST = env("EMAIL_HOST") #'smtp.gmail.com'
+EMAIL_HOST = env("EMAIL_HOST", default='smtp.gmail.com')
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
-EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_PORT = env("EMAIL_PORT", default="587")
 
 # Blockchain
 BLOCKCHAIN_HOST = env("BLOCKCHAIN_HOST", default="localhost")
 BLOCKCHAIN_PORT = env("BLOCKCHAIN_PORT", default="26657")
 BLOCKCHAIN_REST_PORT = env("BLOCKCHAIN_REST_PORT", default="1317")
 
-BLOCKCHAIN_CLI = env("BLOCKCHAIN_CLI")
-BLOCKCHAIN_CLI_ACCOUNT = env("BLOCKCHAIN_CLI_ACCOUNT")
+BLOCKCHAIN_CLI = env("BLOCKCHAIN_CLI", default="~/go/bin/thesisd")
+BLOCKCHAIN_CLI_ACCOUNT = env("BLOCKCHAIN_CLI_ACCOUNT", default="alice")
 
 # PKI
 # noinspection PyTypeChecker

@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+  postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_DB: thesis
+      POSTGRES_USER: thesis
+      POSTGRES_PASSWORD: thesis
+      POSTGRES_INITDB_ARGS: -A password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
