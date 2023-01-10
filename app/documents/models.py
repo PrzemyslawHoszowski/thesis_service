@@ -1,3 +1,4 @@
+import hashlib
 import json
 import uuid
 
@@ -5,9 +6,6 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.core.files.uploadedfile import UploadedFile
 from django.db import models, IntegrityError
-
-import hashlib
-
 from identity.models import Identity
 
 
@@ -99,10 +97,12 @@ class Document(models.Model):
     def mark_used_files(self, files_list, new_files=None):
         new_files = new_files if new_files else []
         # returns list of files with attached value true/false if file is attached to current version of document
-        return list(map(lambda file: (file, file.fileHashBase16 in self.files or file.fileHashBase16 in new_files), files_list))
+        return list(
+            map(lambda file: (file, file.fileHashBase16 in self.files or file.fileHashBase16 in new_files), files_list))
 
     def can_edit(self, identity_id):
         return (identity_id in self.admins or identity_id in self.editors) and self.state != "Rejected"
+
 
 class Event(models.Model):
     attr = models.CharField(max_length=2000)
@@ -110,6 +110,7 @@ class Event(models.Model):
     title = models.CharField(max_length=64)
     txHash = models.CharField(max_length=64)
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
+
     @classmethod
     def create(cls, attr, date, title, tx_hash, document):
         return cls(attr=attr, date=date, title=title, txHash=tx_hash, document=document)
@@ -117,6 +118,7 @@ class Event(models.Model):
     def attr_to_list(self):
         self.attr = json.loads(self.attr).items()
         return self
+
 
 class StoredFile(models.Model):
     fileHashBase16 = models.CharField(max_length=64)
@@ -151,7 +153,7 @@ class StoredFile(models.Model):
 
 
 class DocumentStorage(models.Model):
-    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
     doc = models.ForeignKey(Document, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -188,6 +190,6 @@ class DocumentStorage(models.Model):
             self.name = self.id
         super().save(force_insert, force_update, using, update_fields)
 
+
 class MetadataThesisService(models.Model):
     last_processed = models.IntegerField()
-

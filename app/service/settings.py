@@ -11,16 +11,15 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+
 import environ
 from OpenSSL import crypto
-
 
 env = environ.Env()
 environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -31,7 +30,8 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DJANGO_DEBUG", default=False)
 
-ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default="hoszowski-inzynierka.pl,212.127.93.66,192.168.0.119,127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS",
+                    default="hoszowski-inzynierka.pl,212.127.93.66,192.168.0.119,127.0.0.1,localhost").split(",")
 
 # SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 
@@ -80,7 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'service.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -94,7 +93,6 @@ DATABASES = {
         'PORT': env("DB_PORT", default="5433"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -114,7 +112,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -127,7 +124,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -155,7 +151,6 @@ COMPRESS_CSS_FILTERS = [
 COMPRESS_JS_FILTERS = [
     'compressor.filters.jsmin.JSMinFilter',
 ]
-
 
 COMPRESS_PRECOMPILERS = (
     ('module', 'compressor_toolkit.precompilers.ES6Compiler'),
@@ -194,4 +189,6 @@ BLOCKCHAIN_CLI_ACCOUNT = env("BLOCKCHAIN_CLI_ACCOUNT", default="alice")
 # PKI
 # noinspection PyTypeChecker
 CERTIFICATE = crypto.load_certificate(crypto.FILETYPE_PEM, open("priv/domain.crt", 'rt').read())
-CERTIFICATE_PRIVATE_KEY = crypto.load_privatekey(crypto.FILETYPE_PEM, open("priv/domain.key", 'rt').read(), passphrase=lambda _: bytes(env("CERTIFICATE_PRIVATE_KEY_PASSWORD"), 'ascii'))
+CERTIFICATE_PRIVATE_KEY = crypto.load_privatekey(crypto.FILETYPE_PEM, open("priv/domain.key", 'rt').read(),
+                                                 passphrase=lambda _: bytes(env("CERTIFICATE_PRIVATE_KEY_PASSWORD"),
+                                                                            'ascii'))

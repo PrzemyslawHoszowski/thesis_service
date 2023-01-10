@@ -4,8 +4,6 @@ from django.contrib.auth.models import User
 from django import forms
 from django.core.exceptions import ValidationError
 
-from identity.models import Identity
-
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField(max_length=200, help_text="Required")
@@ -20,5 +18,7 @@ class SignupForm(UserCreationForm):
 def validate_bech32(value):
     if bech32.bech32_decode(value) == (None, None):
         raise ValidationError("Given value is not bech32 address with cosmos prefix")
+
+
 class RequestTokensForm(forms.Form):
     address = forms.CharField(max_length=45, validators=[validate_bech32])

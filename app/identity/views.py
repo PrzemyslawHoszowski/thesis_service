@@ -1,30 +1,29 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import redirect_to_login
-from django.core.mail import EmailMessage
+import logging
+import os
+
 from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.views import redirect_to_login
 from django.contrib.sites.shortcuts import get_current_site
-from django.shortcuts import render, redirect
-
+from django.core.mail import EmailMessage
 from django.http import HttpResponse, FileResponse
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic import FormView
-
 from documents.models import DocumentStorage
 from identity.forms import SignupForm, RequestTokensForm
 from identity.models import Identity, Certificate
 from identity.tokens import account_activation_token
 
-import os
-import logging
-
 from service import settings
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 # https://medium.com/@frfahim/django-registration-with-confirmation-email-bb5da011e4ef
 def sign_up(request):
@@ -56,6 +55,7 @@ def sign_up(request):
     logger.info(form.errors)
     return render(request, 'sign_up.html', {'form': form})
 
+
 def activate(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
@@ -70,6 +70,7 @@ def activate(request, uidb64, token):
     else:
         return HttpResponse('Activation link is invalid!')
 
+
 @login_required
 def index(request):
     try:
@@ -78,6 +79,7 @@ def index(request):
         user_identity = Identity.create(request.user)
         user_identity.save()
     return render(request, 'identity_data.html', {'user': request.user, 'identity': user_identity})
+
 
 class RequestTokensFormView(FormView):
     form_class = RequestTokensForm
@@ -97,11 +99,14 @@ class RequestTokensFormView(FormView):
         else:
             return self.form_invalid(form)
 
+
 @login_required
 def certificate(request):
     caller_identity = Identity.objects.get(user=request.user)
     cert = Certificate.objects.select_related("identity__user").get(identity__id=caller_identity.id)
-    return FileResponse(cert.certificate_pem, content_type="application/x-pem-file", filename=cert.identity.user.first_name + " " + cert.identity.user.last_name + ".pem")
+    return FileResponse(cert.certificate_pem, content_type="application/x-pem-file",
+                        filename=cert.identity.user.first_name + " " + cert.identity.user.last_name + ".pem")
+
 
 @login_required
 def document_user_certificate(request, document_index, address):
@@ -115,12 +120,14 @@ def document_user_certificate(request, document_index, address):
     messages.error(request, "You are unauthorized to see this identity or it doesn't exist.")
     return redirect('documents:doc', document_index)
 
+
 @login_required
 def document_identity(request, document_index, address):
     user_identity = Identity.objects.select_related("user").get(blockchain_address=address)
     doc_storage = DocumentStorage.objects.filter(user__in=[request.user, user_identity.user],
                                                  doc__index=document_index, accepted=True).count()
     if doc_storage == 2 or user_identity.user == request.user:
-        return render(request, "other_user_identity.html", {'identity': user_identity, 'document_index': document_index})
+        return render(request, "other_user_identity.html",
+                      {'identity': user_identity, 'document_index': document_index})
     messages.error(request, "You are unauthorized to see this identity or it doesn't exist.")
     return redirect('documents:doc', document_index)

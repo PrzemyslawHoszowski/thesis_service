@@ -1,0 +1,14 @@
+[flake8]
+exclude =
+    .git,
+    .gitignore,
+    *.pot,
+    *.py[co],
+    __pycache__,
+    venv,
+    .env,
+    *migrations*,
+    *static*,
+    *static_collected
+max-line-length=120
+ignore=E731,E722

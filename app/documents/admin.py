@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from documents.models import Document, Event, DocumentStorage, StoredFile, MetadataThesisService
+from .models import Document, Event, DocumentStorage, StoredFile, MetadataThesisService
 
 # Register your models here.
 admin.site.register(Document)

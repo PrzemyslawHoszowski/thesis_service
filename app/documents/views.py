@@ -1,15 +1,15 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import HttpResponse, FileResponse
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.views.generic.edit import FormView
-from django.shortcuts import get_object_or_404
-
-from .forms import FileFieldForm
 from documents.models import DocumentStorage, Document, StoredFile, Event
 from identity.models import Identity
+
+from .forms import FileFieldForm
 
 
 @login_required
@@ -20,8 +20,9 @@ def index(request):
     except Identity.DoesNotExist:
         is_address_assigned = False
     if not is_address_assigned:
-        messages.error(request, f"Please assign your blockchain wallet to the account. <a href=\"identity/\">Here</a>")
+        messages.error(request, "Please assign your blockchain wallet to the account. <a href=\"identity/\">Here</a>")
     return render(request, 'doc_index.html', {'docs': docs, 'is_address_assigned': is_address_assigned})
+
 
 @login_required
 def document_view(request, doc_index):
@@ -46,7 +47,7 @@ def document_view(request, doc_index):
 
     user_identity = Identity.objects.filter(user=request.user).get()
     # todo implement accept document mechanism to allow to share/hide personal data with others
-    roles =  document_storage.doc.translated_roles()
+    roles = document_storage.doc.translated_roles()
     user_address = user_identity.blockchain_address
 
     can_sign = document_storage.doc.can_sign(user_address)
@@ -68,14 +69,15 @@ def document_view(request, doc_index):
 
     return render(request, 'doc_view.html',
                   {
-                    'doc': document_storage,
-                    'files': files,
-                    'roles': roles,
-                    'can_sign': can_sign,
-                    'can_add_user': can_add_user,
-                    'can_edit': can_edit,
-                    'events': events,
+                      'doc': document_storage,
+                      'files': files,
+                      'roles': roles,
+                      'can_sign': can_sign,
+                      'can_add_user': can_add_user,
+                      'can_edit': can_edit,
+                      'events': events,
                   })
+
 
 @login_required
 def get_file(request, doc_index, file_hash):
@@ -145,17 +147,19 @@ class FileFieldFormView(FormView):
 
             attached_files = StoredFile.objects.filter(doc=doc)
             context = {
-            'form': form,
-            'doc': doc,
-            'files': doc.mark_used_files(attached_files, new_files),
-            'can_edit': can_edit
+                'form': form,
+                'doc': doc,
+                'files': doc.mark_used_files(attached_files, new_files),
+                'can_edit': can_edit
             }
             return render(request, self.template_name, context)
         else:
             return self.form_invalid(form)
 
+
 def accept_document_message(request, doc_index):
     messages.info(request, render_to_string('accept_document.html', {'doc_index': doc_index}, request=request))
+
 
 @login_required
 def action(request, doc_index):
