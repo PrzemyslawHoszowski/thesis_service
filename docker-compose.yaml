@@ -38,14 +38,18 @@ services:
       - postgres
     networks:
       - thesis
+    volumes:
+      - static_volume:/home/app/web/staticfiles
   nginx:
     build: ./nginx
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+    networks:
+      - thesis
     ports:
       - "1337:80"
     depends_on:
       - web
-    networks:
-      - thesis
-
 volumes:
   postgres_data:
+  static_volume:

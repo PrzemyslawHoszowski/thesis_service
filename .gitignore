@@ -4,3 +4,5 @@ py_env
 static_collected/
 media/
 nohup.out
+staticfiles/
+app/staticfiles/

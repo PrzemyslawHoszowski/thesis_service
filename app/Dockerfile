@@ -1,3 +1,5 @@
+## source https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/
+
 ###########
 # BUILDER #
 ###########
@@ -14,9 +16,8 @@ ENV PYTHONUNBUFFERED 1
 
 # install psycopg2 dependencies
 RUN apk update \
-    && apk add postgresql-dev gcc python3-dev musl-dev nodejs
-
-
+    && apk add postgresql-dev gcc python3-dev musl-dev && apk add --update nodejs npm
+RUN apk add gcompat
 # lint
 RUN pip install --upgrade pip
 RUN pip install flake8==3.9.2
@@ -40,13 +41,15 @@ RUN mkdir -p /home/app
 
 # create the app user
 RUN addgroup -S app && adduser -S app -G app
-
+RUN apk add --update nodejs npm
 # create the appropriate directories
 ENV HOME=/home/app
+
 ENV APP_HOME=/home/app/web
 RUN mkdir $APP_HOME
+RUN mkdir $APP_HOME/staticfiles
+RUN mkdir $APP_HOME/staticfiles/CACHE
 WORKDIR $APP_HOME
-
 # install dependencies
 RUN apk update && apk add libpq
 COPY --from=builder /usr/src/app/wheels /wheels

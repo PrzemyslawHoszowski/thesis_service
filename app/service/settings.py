@@ -33,6 +33,8 @@ DEBUG = env("DJANGO_DEBUG", default=False)
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS",
                     default="hoszowski-inzynierka.pl,212.127.93.66,192.168.0.119,127.0.0.1,localhost").split(",")
 
+CSRF_TRUSTED_ORIGINS = ['https://hoszowski-inzynierka.pl:1337', 'http://hoszowski-inzynierka.pl:1337']
+
 # SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 
 # Application definition
