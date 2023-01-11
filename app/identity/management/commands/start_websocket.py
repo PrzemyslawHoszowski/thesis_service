@@ -4,6 +4,7 @@ import hashlib
 import json
 import logging
 import os
+import ssl
 import traceback
 from datetime import datetime
 
@@ -20,17 +21,18 @@ from service import settings
 
 logger = logging.getLogger(__name__)
 
-URL = "http://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_REST_PORT + "/"
-TENDERMINT_URL = "http://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_PORT + "/"
+URL = "https://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_REST_PORT + "/"
+API_URL = "http://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_REST_PORT + "/"
+TENDERMINT_URL = "https://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_PORT + "/"
 
 
 def get_document(index):
-    response = requests.get(URL + f"/thesis/thesis/document/{index}")
+    response = requests.get(API_URL + f"/thesis/thesis/document/{index}")
     return response.json()['document']
 
 
 def get_block_time(height):
-    response = requests.get(URL + f"/cosmos/staking/v1beta1/historical_info/{height}")
+    response = requests.get(API_URL + f"/cosmos/staking/v1beta1/historical_info/{height}")
     return make_aware(datetime.strptime(response.json()['hist']['header']['time'].split('.')[0], '%Y-%m-%dT%H:%M:%S'))
 
 
@@ -39,7 +41,7 @@ class BlockFromFuture(Exception):
 
 
 def get_block(height):
-    response = requests.get(TENDERMINT_URL + f"/block?height={height}").json()
+    response = requests.get(TENDERMINT_URL + f"/block?height={height}", verify=False).json()
     if "error" in response:
         raise BlockFromFuture
     return response["result"]
@@ -55,12 +57,9 @@ def handle_authorization(event, height, _tx_hash, _event_time):
         ident.save()
         cert = Certificate.create("Amr5gERyHZ9Mb3WW/7GUmR6NGSfGWaBRHoVKtxhAQzZV", ident)
         cert.save()
-        print(
-            f"{settings.BLOCKCHAIN_CLI} tx thesis add-certificate {cert.hash()} {ident.blockchain_address} "
-            f"--from {settings.BLOCKCHAIN_CLI_ACCOUNT} -y")
         os.system(
-            f"{settings.BLOCKCHAIN_CLI} tx thesis add-certificate {cert.hash()} {ident.blockchain_address} "
-            f"--from {settings.BLOCKCHAIN_CLI_ACCOUNT} -y")
+            f"{settings.BLOCKCHAIN_CLI} tx thesis add-certificate {cert.hash()} {ident.blockchain_address}"
+            f" --from {settings.BLOCKCHAIN_CLI_ACCOUNT} {settings.BLOCKCHAIN_CLI_GLOBAL_FLAGS} -y")
 
     except Identity.DoesNotExist:
         logger.error(
@@ -114,7 +113,8 @@ EVENTS = EVENTS_HANDLERS.keys()
 # https://stackoverflow.com/questions/66166142/contacting-another-websocket-server-from-inside-django-channels
 async def client(websocket_url):
     await process_blocks_from_the_past()
-    async for websocket in websockets.connect(websocket_url):
+
+    async for websocket in websockets.connect(websocket_url, ssl=ssl.SSLContext()):
         await subscribe(websocket)
         try:
             async for _message in websocket:
@@ -162,7 +162,7 @@ def get_transactions(block):
 
 
 def get_transaction_result(tx_hash):
-    response = requests.get(TENDERMINT_URL + f"/tx?hash=0x{tx_hash}")
+    response = requests.get(TENDERMINT_URL + f"/tx?hash=0x{tx_hash}", verify=False)
     return response.json()["result"]
 
 
@@ -196,6 +196,6 @@ def get_tx_hash(tx):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        url = "ws://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_PORT + "/websocket"
+        url = "wss://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_PORT + "/websocket"
         logger.info(f"Connecting to websocket server {url}")
         asyncio.run(client(url))

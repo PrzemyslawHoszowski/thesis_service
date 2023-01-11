@@ -2,8 +2,8 @@ export const getTestnetChainInfo = () => {
     return {
     chainId: "thesis",
     chainName: "Thesis",
-    rpc: "http://" + location.hostname + ":26657",
-    rest: "http://" + location.hostname + ":1317",
+    rpc: location.protocol + "//" + location.hostname + ":26657",
+    rest: location.protocol + "//" + location.hostname + ":1317",
     bip44: {
         coinType: 118,
     },

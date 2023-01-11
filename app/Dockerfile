@@ -42,6 +42,7 @@ RUN mkdir -p /home/app
 # create the app user
 RUN addgroup -S app && adduser -S app -G app
 RUN apk add --update nodejs npm
+RUN apk add libc6-compat
 # create the appropriate directories
 ENV HOME=/home/app
 
@@ -68,7 +69,7 @@ COPY . $APP_HOME
 RUN chown -R app:app $APP_HOME
 
 # change to the app user
-USER app
+#USER app
 
 # run entrypoint.sh
 ENTRYPOINT ["/home/app/web/entrypoint.sh"]

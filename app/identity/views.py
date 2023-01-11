@@ -93,7 +93,10 @@ class RequestTokensFormView(FormView):
             address = form.cleaned_data["address"]
             # this should be logged as in commercial use this option should be somehow limited
             logger.error(f"Sending tokens to {address}")
-            os.system(f"{settings.BLOCKCHAIN_CLI} tx bank send {settings.BLOCKCHAIN_CLI_ACCOUNT} {address} 500stake -y")
+            logger.error(f"{settings.BLOCKCHAIN_CLI} {settings.BLOCKCHAIN_CLI_GLOBAL_FLAGS} tx bank send "
+                         f"{settings.BLOCKCHAIN_CLI_ACCOUNT} {address} 500stake -y")
+            os.system(f"{settings.BLOCKCHAIN_CLI} {settings.BLOCKCHAIN_CLI_GLOBAL_FLAGS} tx bank send "
+                      f"{settings.BLOCKCHAIN_CLI_ACCOUNT} {address} 500stake -y")
             messages.info(request, f"Sent tokens to {address}")
             return render(request, self.template_name)
         else:

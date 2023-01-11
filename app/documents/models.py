@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.core.files.uploadedfile import UploadedFile
 from django.db import models, IntegrityError
+
 from identity.models import Identity
 
 

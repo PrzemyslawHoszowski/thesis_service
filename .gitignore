@@ -6,3 +6,4 @@ media/
 nohup.out
 staticfiles/
 app/staticfiles/
+cert

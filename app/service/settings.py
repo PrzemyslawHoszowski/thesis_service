@@ -187,6 +187,7 @@ BLOCKCHAIN_REST_PORT = env("BLOCKCHAIN_REST_PORT", default="1317")
 
 BLOCKCHAIN_CLI = env("BLOCKCHAIN_CLI", default="~/go/bin/thesisd")
 BLOCKCHAIN_CLI_ACCOUNT = env("BLOCKCHAIN_CLI_ACCOUNT", default="alice")
+BLOCKCHAIN_CLI_GLOBAL_FLAGS = env("BLOCKCHAIN_CLI_GLOBAL_FLAGS", default="")
 
 # PKI
 # noinspection PyTypeChecker

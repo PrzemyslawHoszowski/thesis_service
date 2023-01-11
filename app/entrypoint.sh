@@ -1,5 +1,6 @@
 #!/bin/sh
 
+cp /run/secrets/.thesis /home/app/.thesis -r
 python manage.py collectstatic --noinput
 if [ "$DATABASE" = "postgres" ]
 then

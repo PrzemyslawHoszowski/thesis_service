@@ -34,12 +34,17 @@ services:
       - EMAIL_HOST_USER=${EMAIL_HOST_USER}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
       - CERTIFICATE_PRIVATE_KEY_PASSWORD=${CERTIFICATE_PRIVATE_KEY_PASSWORD}
+      - BLOCKCHAIN_HOST=host.docker.internal
+#      - BLOCKCHAIN_CLI_GLOBAL_FLAGS=--home /run/secrets/.thesis
     depends_on:
       - postgres
     networks:
       - thesis
     volumes:
       - static_volume:/home/app/web/staticfiles
+    secrets:
+      - cert
+      - .thesis
   nginx:
     build: ./nginx
     volumes:
@@ -47,9 +52,35 @@ services:
     networks:
       - thesis
     ports:
-      - "1337:80"
+      - "1347:80"
+      - "1337:443"
     depends_on:
       - web
+    secrets:
+      - cert
+  node-1:
+    image: thesis-blockchain:latest
+    command: ./thesisd start
+    volumes:
+      - node_1_data:/home/app/
+    networks:
+      - thesis
+    ports:
+      - "26657:26657"
+      - "1317:1317"
+      - "26656:26656"
+      - "9090:9090"
+    secrets:
+      - .thesis
+
+
 volumes:
   postgres_data:
   static_volume:
+  node_1_data:
+
+secrets:
+  cert:
+    file: ./cert
+  .thesis:
+    file: /home/przemek/.thesis
