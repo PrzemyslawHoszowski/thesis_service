@@ -1,6 +1,7 @@
 version: '3.3'
 networks:
   thesis:
+    driver: bridge
 
 services:
   postgres:
@@ -42,9 +43,35 @@ services:
       - thesis
     volumes:
       - static_volume:/home/app/web/staticfiles
+      - files_volume:/home/app/web/media
     secrets:
       - cert
       - .thesis
+    restart: always
+  blockchain_websocket:
+    build: ./app
+    command: python manage.py start_websocket
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - CERTIFICATE_PRIVATE_KEY_PASSWORD=${CERTIFICATE_PRIVATE_KEY_PASSWORD}
+      - BLOCKCHAIN_HOST=node-1
+    #      - BLOCKCHAIN_CLI_GLOBAL_FLAGS=--home /run/secrets/.thesis
+    depends_on:
+      - postgres
+      - node-1
+    networks:
+      - thesis
+    secrets:
+      - cert
+      - .thesis
+    restart: always
+
   nginx:
     build: ./nginx
     volumes:
@@ -54,22 +81,32 @@ services:
     ports:
       - "1347:80"
       - "1337:443"
+      - "1317:317"
+      - "16657:16657"
+      - "26657:6657"
+      - "26656:6656"
     depends_on:
       - web
+      - node-1
     secrets:
       - cert
   node-1:
     image: thesis-blockchain:latest
-    command: ./thesisd start
+    expose:
+      - 26657
+      - 1317
+      - 26656
+      - 9090
+#    ports:
+#      - "26657:26657"
+#      - "1317:1317"
+#      - "26656:26656"
+#      - "9090:9090"
+    command: ./thesisd start --rpc.laddr tcp://0.0.0.0:26657
     volumes:
       - node_1_data:/home/app/
     networks:
       - thesis
-    ports:
-      - "26657:26657"
-      - "1317:1317"
-      - "26656:26656"
-      - "9090:9090"
     secrets:
       - .thesis
 
@@ -78,6 +115,7 @@ volumes:
   postgres_data:
   static_volume:
   node_1_data:
+  files_volume:
 
 secrets:
   cert:

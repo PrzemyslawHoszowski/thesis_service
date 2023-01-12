@@ -4,7 +4,6 @@ import hashlib
 import json
 import logging
 import os
-import ssl
 import traceback
 from datetime import datetime
 
@@ -21,9 +20,9 @@ from service import settings
 
 logger = logging.getLogger(__name__)
 
-URL = "https://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_REST_PORT + "/"
+URL = "http://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_REST_PORT + "/"
 API_URL = "http://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_REST_PORT + "/"
-TENDERMINT_URL = "https://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_PORT + "/"
+TENDERMINT_URL = "http://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_PORT + "/"
 
 
 def get_document(index):
@@ -114,7 +113,7 @@ EVENTS = EVENTS_HANDLERS.keys()
 async def client(websocket_url):
     await process_blocks_from_the_past()
 
-    async for websocket in websockets.connect(websocket_url, ssl=ssl.SSLContext()):
+    async for websocket in websockets.connect(websocket_url):
         await subscribe(websocket)
         try:
             async for _message in websocket:
@@ -196,6 +195,6 @@ def get_tx_hash(tx):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        url = "wss://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_PORT + "/websocket"
+        url = "ws://" + settings.BLOCKCHAIN_HOST + ":" + settings.BLOCKCHAIN_PORT + "/websocket"
         logger.info(f"Connecting to websocket server {url}")
         asyncio.run(client(url))
