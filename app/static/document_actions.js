@@ -1,4 +1,4 @@
-import {
+ import {
     createRegistry,
     MsgAddUsersUrl,
     MsgRejectDocumentUrl,
@@ -198,7 +198,7 @@ async function sendSignDocumentTx() {
         alert("You need to install Keplr")
         return
     }
-    try {
+    // try {
         const myRegistry = createRegistry()
         const offlineSigner = window.getOfflineSigner(getTestnetChainInfo().chainId)
         const signingClient = await SigningStargateClient.connectWithSigner(
@@ -209,7 +209,8 @@ async function sendSignDocumentTx() {
 
         // Get the address and balance of your user
         const account = (await offlineSigner.getAccounts())[0]
-
+        alert(account.address)
+        alert(getLastEditHeight())
         let sendMsg = {
             typeUrl: MsgSignDocumentUrl,
             value: {
@@ -224,9 +225,9 @@ async function sendSignDocumentTx() {
             gas: "200000",
         },);
         alert(sendResult.height)
-    } catch (error) {
-        alert(error)
-    }
+    // } catch (error) {
+    //     alert(error)
+    // }
 }
 
 async function sendRejectSignatureTx() {
