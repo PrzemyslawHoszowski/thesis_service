@@ -102,7 +102,7 @@ class Document(models.Model):
             map(lambda file: (file, file.fileHashBase16 in self.files or file.fileHashBase16 in new_files), files_list))
 
     def can_edit(self, identity_id):
-        return (identity_id in self.admins or identity_id in self.editors) and self.state != "Rejected"
+        return (identity_id in self.admins or identity_id in self.editors) and self.state == "Editing"
 
 
 class Event(models.Model):

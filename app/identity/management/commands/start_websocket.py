@@ -7,6 +7,7 @@ import os
 import traceback
 from datetime import datetime
 
+import pytz
 import requests
 import websockets
 from asgiref.sync import sync_to_async
@@ -153,7 +154,8 @@ def process_block(height):
 
 
 def get_time_from_block(block):
-    return make_aware(datetime.strptime(block["block"]["header"]["time"].split('.')[0], '%Y-%m-%dT%H:%M:%S'))
+    naive_utc_time = datetime.strptime(block["block"]["header"]["time"].split('.')[0], '%Y-%m-%dT%H:%M:%S')
+    return make_aware(naive_utc_time, timezone=pytz.UTC)
 
 
 def get_transactions(block):

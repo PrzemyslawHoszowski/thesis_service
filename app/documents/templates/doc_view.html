@@ -123,7 +123,7 @@
             <table id="signers-table" class="table">
                 <thead>
                     <tr><th>{% if doc.doc.state != 'Editing' %} Remaining signers {% else %} Signers {% endif %}
-                        {% if can_add_user %}
+                        {% if can_add_user and doc.doc.state == 'Editing'%}
                             <button class="role-btn remove-from-role btn btn-danger btn-sm" name="signer">Send remove transaction with marked users</button>
                             <button class="role-btn add-to-role btn btn-info btn-sm" name="signer">Send add to role transaction</button>
                         {% endif %}

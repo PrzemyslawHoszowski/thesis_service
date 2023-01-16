@@ -38,6 +38,7 @@ def sign_up(request):
             message = render_to_string('acc_activate_email.html', {
                 'user': user,
                 'domain': current_site.domain,
+                'port': request.META['SERVER_PORT'],
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user)
             })
@@ -49,7 +50,8 @@ def sign_up(request):
             )
             email.content_subtype = "html"
             email.send()
-            return HttpResponse('Please confirm your email address to complete the registration')
+            return HttpResponse('Please confirm your email address to complete the registration. '
+                                'It may be in spam folder.')
     else:
         form = SignupForm()
     logger.info(form.errors)
