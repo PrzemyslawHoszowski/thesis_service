@@ -14,7 +14,7 @@ from asgiref.sync import sync_to_async
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.timezone import make_aware
-from documents.models import Document, Event, DocumentStorage, MetadataThesisService
+from documents.models import Document, Event, DocumentStorage, MetadataThesisService, StoredFile
 from identity.models import Identity, Certificate
 
 from service import settings
@@ -97,6 +97,17 @@ def handle_document_update(event, _height, tx_hash, event_time):
                 DocumentStorage.objects.filter(doc__index=index, user=user.user).update(accepted=True)
 
 
+def handle_file_ack(event, _height, tx_hash, _event_time):
+    index = event['attributes']['document-id']
+    caller = event['attributes']['caller']
+    files_raw = event['attributes']['acknowledged-files']
+    if caller != settings.BLOCKCHAIN_CLI_ACCOUNT_ADDRESS:
+        logger.error(f"Unknown caller address in fileAck transaction. caller #{caller}")
+        return
+    files = files_raw.split(',')
+    StoredFile.objects.filter(doc__index=index, fileHashBase16__in=files, ackTxHash="").update(ackTxHash=tx_hash)
+
+
 EVENTS_HANDLERS = {
     "entity-authorized": handle_authorization,
     "document-created": handle_document_created,
@@ -106,6 +117,7 @@ EVENTS_HANDLERS = {
     "document-files-changed": handle_document_update,
     "document-signature-rejected": handle_document_update,
     "document-rejected": handle_document_update,
+    "file-acknowledged": handle_file_ack,
 }
 EVENTS = EVENTS_HANDLERS.keys()
 

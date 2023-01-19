@@ -29,7 +29,7 @@
     <div id="files">
         <table id="files-table" class="table">
             <thead>
-                <tr><th>Files <a href="{% url 'documents:doc_files' doc.doc.index %}" style="float: right"><button class="btn btn-link">{% if can_edit %}Edit files{% else %}Other files{% endif %}</button></a> </th></tr>
+                <tr><th>Files <a href="{% url 'documents:doc_files' doc.doc.index %}" style="float: right">{% if can_edit %}Edit files{% else %}Other files{% endif %}</a> </th></tr>
             </thead>
             <tbody>
                 {% for file in files %}

@@ -125,6 +125,7 @@ class StoredFile(models.Model):
     fileHashBase16 = models.CharField(max_length=64)
     doc = models.ForeignKey(Document, on_delete=models.CASCADE)
     file = models.FileField(upload_to="uploads/")
+    ackTxHash = models.CharField(max_length=64, default="")
     name = models.CharField(max_length=100, null=True, blank=True)
 
     class Meta:

@@ -1,3 +1,5 @@
+import os
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -8,6 +10,8 @@ from django.template.loader import render_to_string
 from django.views.generic.edit import FormView
 from documents.models import DocumentStorage, Document, StoredFile, Event
 from identity.models import Identity
+from identity.views import logger
+from service import settings
 
 from .forms import FileFieldForm
 
@@ -152,6 +156,10 @@ class FileFieldFormView(FormView):
                 'files': doc.mark_used_files(attached_files, new_files),
                 'can_edit': can_edit
             }
+            logger.error(f"{settings.BLOCKCHAIN_CLI} {settings.BLOCKCHAIN_CLI_GLOBAL_FLAGS} tx thesis ack-files "
+                         f"{','.join(new_files)} {doc.index} --from {settings.BLOCKCHAIN_CLI_ACCOUNT}")
+            os.system(f"{settings.BLOCKCHAIN_CLI} {settings.BLOCKCHAIN_CLI_GLOBAL_FLAGS} tx thesis ack-files "
+                      f"{','.join(new_files)} {doc.index} --from {settings.BLOCKCHAIN_CLI_ACCOUNT} -y")
             return render(request, self.template_name, context)
         else:
             return self.form_invalid(form)
