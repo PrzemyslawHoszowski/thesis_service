@@ -7,3 +7,4 @@ nohup.out
 staticfiles/
 app/staticfiles/
 cert
+priv/thesisd

@@ -16,7 +16,10 @@
     <form id="select-files-form" class="form-check form-switch">
         {% for file in files %}
             <input class="form-check-input" type="checkbox"  id="{{ file.0.fileHashBase16 }}" {% if file.1 %} checked {% endif %} {% if not can_edit %}disabled{% endif %}>
-            <label class="form-check-label" for="{{ file.0.fileHashBase16 }}"><a href="{% url 'documents:get_file' doc.index file.0.fileHashBase16 %}">{{ file.0.name }}</a> 0x{{ file.0.fileHashBase16}}</label><br>
+            <label class="form-check-label" for="{{ file.0.fileHashBase16 }}"><a href="{% url 'documents:get_file' doc.index file.0.fileHashBase16 %}">{{ file.0.name }}</a>
+            {% if file.0.ackTxHash != "" %} <a href="https://hoszowski-inzynierka.pl:26657/tx?hash=0x{{ file.0.ackTxHash }}"> Acknowledge tx </a>
+            {% else %} Acknowledge transaction is being processed. {% endif %}</label>
+            <br>
         {% endfor %}
         <input type="submit" value="Choose" {% if not can_edit %}disabled{% endif %}>
     </form><br><br>
