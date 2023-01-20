@@ -3,6 +3,7 @@
 {% block title %} Home {% endblock %}
 {% load static %}
 {% load compress %}
+{% load crispy_forms_tags %}
 
 {% block additional_js %}
     {% compress js %}
@@ -21,14 +22,17 @@
             {% else %} Acknowledge transaction is being processed. {% endif %}</label>
             <br>
         {% endfor %}
-        <input type="submit" value="Choose" {% if not can_edit %}disabled{% endif %}>
+        <input type="submit" class="btn btn-primary" value="Choose files" {% if not can_edit %}disabled{% endif %}>
     </form><br><br>
     {% if can_edit %}
     <h3>Submit new files</h3>
         <form method="post" enctype=multipart/form-data>
             {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Upload">
+            <div class="mb-3">
+              <label for="id_files" class="form-label">Multiple files input example</label>
+              <input class="form-control" type="file" name="files" id="id_files" multiple>
+            </div>
+            <input type="submit" class="btn btn-primary" value="Upload">
         </form>
     {% endif %}
 {% endblock %}

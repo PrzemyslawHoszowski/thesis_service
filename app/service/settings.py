@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'documents.apps.DocumentsConfig',
     'compressor',
     'compressor_toolkit',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -165,6 +166,8 @@ COMPRESS_CACHEABLE_PRECOMPILERS = (
 )
 
 COMPRESS_ENABLED = True
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
