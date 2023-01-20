@@ -150,8 +150,9 @@ class StoredFile(models.Model):
         try:
             stored_file.save()
         except IntegrityError:
-            pass
-        return stored_file
+            stored_file.delete()
+            return False, stored_file
+        return True, stored_file
 
 
 class DocumentStorage(models.Model):
