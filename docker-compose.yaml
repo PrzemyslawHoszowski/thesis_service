@@ -11,6 +11,7 @@ services:
       POSTGRES_USER: thesis
       POSTGRES_PASSWORD: thesis
       POSTGRES_INITDB_ARGS: -A password
+    restart: always
     ports:
       - "5433:5432"
     networks:
@@ -21,9 +22,6 @@ services:
   web:
     build: ./app
     command: gunicorn service.wsgi:application --bind 0.0.0.0:8000
-#    command: python manage.py runserver 0.0.0.0:8000
-#    volumes:
-#      - ./working_dir/:/usr/src/app/
     expose:
       - 8000
     env_file:
@@ -48,6 +46,7 @@ services:
       - cert
       - .thesis
     restart: always
+
   blockchain_websocket:
     build: ./app
     command: python manage.py start_websocket
@@ -73,6 +72,7 @@ services:
     restart: always
 
   nginx:
+    # ngnix is responsible for https communication between world and services(web and node-1)
     build: ./nginx
     volumes:
       - static_volume:/home/app/web/staticfiles
@@ -90,6 +90,8 @@ services:
       - node-1
     secrets:
       - cert
+    restart: always
+
   node-1:
     image: thesis-blockchain:latest
     expose:
@@ -97,24 +99,41 @@ services:
       - 1317
       - 26656
       - 9090
-#    ports:
-#      - "26657:26657"
-#      - "1317:1317"
-#      - "26656:26656"
-#      - "9090:9090"
     command: ./thesisd start --rpc.laddr tcp://0.0.0.0:26657
+    env_file:
+      - blockchain/node-1.env
     volumes:
       - node_1_data:/home/app/
     networks:
       - thesis
-    secrets:
-      - .thesis
+    restart: always
+
+  node-2:
+    image: thesis-blockchain:latest
+    expose:
+      - 26657
+      - 1317
+      - 26656
+      - 9090
+    ports:
+      - "26659:26657"
+    command: ./thesisd start --rpc.laddr tcp://0.0.0.0:26657
+    env_file:
+      - blockchain/node-2.env
+    volumes:
+      - node_2_data:/home/app/
+    networks:
+      - thesis
+    depends_on:
+      - node-1
+    restart: always
 
 
 volumes:
   postgres_data:
   static_volume:
   node_1_data:
+  node_2_data:
   files_volume:
 
 secrets:
